@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## v1.3.0 - 2022.08.24 2
+## v1.3.0 - 2022.08.24 03
 * recheck all dependencies
 * remove more config files. This configs depends on host now
 * fix some configs
