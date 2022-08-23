@@ -552,12 +552,14 @@ p-drop
 		@apply px-1
 
 		p-drop-options
-			@apply inline-block align-top h-78 overflow-x-hidden overflow-y-auto border-r border-transparent
+			@apply inline-block align-top h-[calc(theme("spacing.1")*78)] overflow-x-hidden overflow-y-auto border-r border-transparent
+
+
 			&:not(:last-child)
 				@apply border-gray-300
 			&[date]
 				@apply overflow-y-hidden px-1
-				width: calc(theme("spacing.42") + theme("spacing.2") + 1px)
+				width: calc(theme("spacing.1") * 42 + theme("spacing.1") * 2 + 1px)
 				line-height: 0
 
 			p-drop-option

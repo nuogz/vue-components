@@ -9,6 +9,7 @@ import pluginVue from '@vitejs/plugin-vue';
 const dirPackage = dirname(fileURLToPath(import.meta.url));
 
 
+
 export default defineConfig({
 	plugins: [
 		pluginVue({
@@ -24,21 +25,21 @@ export default defineConfig({
 	build: {
 		outDir: resolve(dirPackage, 'dist'),
 		emptyOutDir: true,
-		chunkSizeWarningLimit: 1024
-	},
-	publicDir: resolve(dirPackage, 'src', 'public'),
-	clearScreen: false,
-	server: {
-		port: 47,
-		proxy: {
-			'^/api/': {
-				target: 'http://127.0.0.1:147',
-				changeOrigin: true,
-			},
-			'/wock': {
-				target: 'ws://127.0.0.1:147/wock',
-				ws: true
-			},
+		chunkSizeWarningLimit: 1024,
+		lib: {
+			entry: resolve(dirPackage, 'src', 'index.js'),
+			name: 'NuogzVueComponents',
+			formats: ['es']
+		},
+		rollupOptions: {
+			external: [
+				'@fortawesome/free-solid-svg-icons',
+				'@fortawesome/vue-fontawesome',
+				'@nuogz/utility',
+				'moment',
+				'tippy.js',
+				'vue',
+			],
 		}
-	}
+	},
 });
