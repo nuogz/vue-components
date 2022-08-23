@@ -1,7 +1,14 @@
 # CHANGELOG
 
-## v1.2.0 - 2022.08.23 11
-* `vite.build.rollupOptions.external` is not good, cancel all external build config
+## v1.3.0 - 2022.08.24 2
+* recheck all dependencies
+* remove more config files. This configs depends on host now
+* fix some configs
+
+
+## v1.2.0 - 2022.08.23
+* no longer pre-build codes
+* `vite.build.rollupOptions.external` is not good, cancel all configs about build external
 
 
 ## v1.1.0 - 2022.08.23 11
