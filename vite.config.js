@@ -31,15 +31,6 @@ export default defineConfig({
 			name: 'NuogzVueComponents',
 			formats: ['es']
 		},
-		rollupOptions: {
-			external: [
-				'@fortawesome/free-solid-svg-icons',
-				'@fortawesome/vue-fontawesome',
-				'@nuogz/utility',
-				'moment',
-				'tippy.js',
-				'vue',
-			],
-		}
+		rollupOptions: { external: ['vue'] }
 	},
 });

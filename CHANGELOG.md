@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v1.2.0 - 2022.08.23 11
+* `vite.build.rollupOptions.external` is not good, cancel all external build config
+
+
 ## v1.1.0 - 2022.08.23 11
 * use `vite` lib mode to build code, instead export directly
 * update `jsconfig.json`
@@ -7,7 +11,6 @@
 * sort `package.json` keys
 * bump up versions
 * simplify `tailwind.config.cjs ` and `vite.config.js`
-
 
 
 ## v1.0.0 - 2022.08.22 17
