@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v1.3.2 - 2022.08.24 15
+* update `package.json`.`peerDependencies`
+* bump up versions
+
+
 ## v1.3.1 - 2022.08.24 15
 * improve package info
 
