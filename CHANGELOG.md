@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v1.3.4 - 2022.08.30 02
+* fix `package.files`
+* bump up dependencies
+
+
 ## v1.3.3 - 2022.08.30 01
 * add `sideEffects` to `package.json`
 * bump up dependencies
