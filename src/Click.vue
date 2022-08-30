@@ -1,12 +1,20 @@
 <template>
-	<comp-click :white="brop(white)">{{text}}</comp-click>
+	<comp-click :white="brop(white)">
+		<Icon v-if="icon" class="inline icon" :icon="icon" :spin="spin" />{{icon ? ' ': ''}}{{text}}
+	</comp-click>
 </template>
 
 <script setup>
+	import { brop } from '@nuogz/utility';
+
+	import { FontAwesomeIcon as Icon } from '@fortawesome/vue-fontawesome';
+
+
 	defineProps({
-		// 文本
 		text: { type: String, default: '' },
 		white: { type: [Boolean, String], default: false },
+		icon: { type: [String, Array], default: null },
+		spin: { type: [Boolean], default: false },
 	});
 </script>
 

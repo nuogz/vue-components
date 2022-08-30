@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.4.0 - 2022.08.30 09
+* `Click` support props `icon` and `spin`
+* improve import
+* bump up dependencies
+
+
 ## v1.3.4 - 2022.08.30 02
 * fix `package.files`
 * bump up dependencies

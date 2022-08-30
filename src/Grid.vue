@@ -55,7 +55,7 @@
 <script setup>
 	import { computed, ref, watch } from 'vue';
 
-	import { parseBoolProp, toCSSLength } from '@nuogz/utility';
+	import { brop, parseBoolProp, toCSSLength } from '@nuogz/utility';
 
 
 

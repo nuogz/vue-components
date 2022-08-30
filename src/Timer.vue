@@ -99,13 +99,12 @@
 
 <script setup>
 	import { computed, nextTick, onMounted, ref, watch } from 'vue';
+	import Moment from 'moment';
 	import Tippy from 'tippy.js';
 
-	import { parseBoolProp } from '@nuogz/utility';
+	import { brop, parseBoolProp } from '@nuogz/utility';
 
 	import { props as propsCommon, setup as setupCommon } from './lib/label.js';
-
-	import Moment from 'moment';
 
 
 

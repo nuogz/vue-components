@@ -28,7 +28,7 @@
 <script setup>
 	import { computed, ref, watch } from 'vue';
 
-	import { parseBoolProp } from '@nuogz/utility';
+	import { brop, parseBoolProp } from '@nuogz/utility';
 
 	import { props as propsCommon, setup as setupCommon } from './lib/label.js';
 

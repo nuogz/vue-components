@@ -17,7 +17,7 @@
 				:readonly="true"
 				:disabled="disable_"
 			/>
-			<Fas :icon="isShowDrop ? faAngleUp : faAngleDown" swap-opacity class="w-4 trans" />
+			<Icon :icon="isShowDrop ? faAngleUp : faAngleDown" swap-opacity class="w-4 trans" />
 		</p-value>
 
 		<!-- 下拉列表 -->
@@ -55,14 +55,13 @@
 
 <script setup>
 	import { computed, onMounted, ref, watch } from 'vue';
+	import { FontAwesomeIcon as Icon } from '@fortawesome/vue-fontawesome';
+	import { faAngleDown, faAngleUp } from '@fortawesome/free-solid-svg-icons';
 	import Tippy from 'tippy.js';
 
-	import { parseBoolProp } from '@nuogz/utility';
+	import { brop, parseBoolProp } from '@nuogz/utility';
 
 	import { props as propsCommon, setup as setupCommon } from './lib/label.js';
-
-	import { FontAwesomeIcon as Fas } from '@fortawesome/vue-fontawesome';
-	import { faAngleDown, faAngleUp } from '@fortawesome/free-solid-svg-icons';
 
 	import Texter from './Texter.vue';
 

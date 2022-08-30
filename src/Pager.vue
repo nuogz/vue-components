@@ -2,7 +2,7 @@
 	<comp-pager>
 		<!-- 左翻 -->
 		<p-button :class="{ invalid: pageNow == 1 }" class="rounded-l-lg" @click.exact="atOffset(-1)">
-			<Fas :icon="faAngleLeft" />
+			<Icon :icon="faAngleLeft" />
 		</p-button>
 		<!-- 当前页数 -->
 
@@ -12,7 +12,7 @@
 		<div class="inblock align-top page">{{pageMax}}</div>
 		<!-- 右翻 -->
 		<p-button :class="{ invalid: pageNow >= pageMax }" class="rounded-r-lg" @click="atOffset(1)">
-			<Fas :icon="faAngleRight" />
+			<Icon :icon="faAngleRight" />
 		</p-button>
 		<div v-if="!hider_().total" class="inblock ml-2 select-none">共 {{total}} 条</div>
 	</comp-pager>
@@ -21,7 +21,7 @@
 <script setup>
 	import { computed, ref, watch } from 'vue';
 
-	import { FontAwesomeIcon as Fas } from '@fortawesome/vue-fontawesome';
+	import { FontAwesomeIcon as Icon } from '@fortawesome/vue-fontawesome';
 	import { faAngleLeft, faAngleRight } from '@fortawesome/free-solid-svg-icons';
 
 
