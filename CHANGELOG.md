@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v1.5.0 - 2022.09.13 10
+* add textarea component `Textbox`
+* bump up dependencies
+
+
 ## v1.4.0 - 2022.08.30 09
 * `Click` support props `icon` and `spin`
 * improve import
