@@ -151,7 +151,7 @@ p-value
 	z-index: 1
 
 	> textarea
-		@apply relative w-full h-full overflow-hidden
+		@apply relative w-full h-full
 		outline: none
 		background: transparent
 		font-size: inherit

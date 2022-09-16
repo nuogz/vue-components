@@ -8,7 +8,7 @@ specifiers:
   '@vitejs/plugin-vue': ^3.1.0
   autoprefixer: ^10.4.11
   eslint: ^8.23.1
-  eslint-plugin-vue: ^9.4.0
+  eslint-plugin-vue: ^9.5.1
   moment: ^2.29.4
   postcss: ^8.4.16
   sass: ^1.54.9
@@ -25,7 +25,7 @@ devDependencies:
   '@vitejs/plugin-vue': 3.1.0_vite@3.1.1+vue@3.2.39
   autoprefixer: 10.4.11_postcss@8.4.16
   eslint: 8.23.1
-  eslint-plugin-vue: 9.4.0_eslint@8.23.1
+  eslint-plugin-vue: 9.5.1_eslint@8.23.1
   moment: 2.29.4
   postcss: 8.4.16
   sass: 1.54.9
@@ -359,7 +359,7 @@ packages:
       postcss: ^8.1.0
     dependencies:
       browserslist: 4.21.4
-      caniuse-lite: 1.0.30001400
+      caniuse-lite: 1.0.30001402
       fraction.js: 4.2.0
       normalize-range: 0.1.2
       picocolors: 1.0.0
@@ -399,8 +399,8 @@ packages:
     engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
     hasBin: true
     dependencies:
-      caniuse-lite: 1.0.30001400
-      electron-to-chromium: 1.4.252
+      caniuse-lite: 1.0.30001402
+      electron-to-chromium: 1.4.254
       node-releases: 2.0.6
       update-browserslist-db: 1.0.9_browserslist@4.21.4
     dev: true
@@ -415,8 +415,8 @@ packages:
     engines: {node: '>= 6'}
     dev: true
 
-  /caniuse-lite/1.0.30001400:
-    resolution: {integrity: sha512-Mv659Hn65Z4LgZdJ7ge5JTVbE3rqbJaaXgW5LEI9/tOaXclfIZ8DW7D7FCWWWmWiiPS7AC48S8kf3DApSxQdgA==}
+  /caniuse-lite/1.0.30001402:
+    resolution: {integrity: sha512-Mx4MlhXO5NwuvXGgVb+hg65HZ+bhUYsz8QtDGDo2QmaJS2GBX47Xfi2koL86lc8K+l+htXeTEB/Aeqvezoo6Ew==}
     dev: true
 
   /chalk/4.1.2:
@@ -528,8 +528,8 @@ packages:
       esutils: 2.0.3
     dev: true
 
-  /electron-to-chromium/1.4.252:
-    resolution: {integrity: sha512-bwfkxPvK2PVbg+dXVFgoun+BkAyJmBPB0AqMTyQ/MzJsA/vEQoTi6Y1uWUDmo/IeOu2zvh4Ac6nfmFOWz5+oHg==}
+  /electron-to-chromium/1.4.254:
+    resolution: {integrity: sha512-Sh/7YsHqQYkA6ZHuHMy24e6TE4eX6KZVsZb9E/DvU1nQRIrH4BflO/4k+83tfdYvDl+MObvlqHPRICzEdC9c6Q==}
     dev: true
 
   /esbuild-android-64/0.15.7:
@@ -751,8 +751,8 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
-  /eslint-plugin-vue/9.4.0_eslint@8.23.1:
-    resolution: {integrity: sha512-Nzz2QIJ8FG+rtJaqT/7/ru5ie2XgT9KCudkbN0y3uFYhQ41nuHEaboLAiqwMcK006hZPQv/rVMRhUIwEGhIvfQ==}
+  /eslint-plugin-vue/9.5.1_eslint@8.23.1:
+    resolution: {integrity: sha512-Y0sL2RY7Xc9S8kNih9lbwHIDmewUg9bfas6WSzsOWRgDXhIHKxRBZYNAnVcXBFfE+bMWHUA5GLChl7TcTYUI8w==}
     engines: {node: ^14.17.0 || >=16.0.0}
     peerDependencies:
       eslint: ^6.2.0 || ^7.0.0 || ^8.0.0

@@ -7,27 +7,33 @@
 		<p-label v-if="label_" :style="styleLabel" @click="disabling_ && (disable_ = ! disable_)">{{ label_ }}</p-label>
 
 		<!-- 输入框 -->
-		<p-value ref="domValue" :hide-outline="brop(isShowDrop)" :only="brop(!disabling_ && !label_)" @click="!disable_ && !readonly_ && atClickDrop($event)">
+		<p-value ref="domValue" :hide-outline="brop(isShowDrop)" :only="brop(!disabling_ && !label_)" @click="atClickDrop($event)">
 			<input
-				ref="domValue"
+				ref="domInput"
 				:value="textShow"
 				:style="{ textAlign: align }"
 				:placeholder="place"
 				:tabindex="tab"
 				:readonly="true"
 				:disabled="disable_"
+				@keypress.space.stop.prevent="atClickDrop"
 			/>
 			<Icon :icon="isShowDrop ? faAngleUp : faAngleDown" swap-opacity class="w-4 trans" />
 		</p-value>
 
 		<!-- 下拉列表 -->
-		<p-drop ref="domDrop" tabindex="0" :style="{ width: widthDrop, minWidth: widthDropMin }">
+		<p-drop ref="domDrop" :tabindex="tab" :style="{ width: widthDrop, minWidth: widthDropMin }"
+			@keypress.enter.stop.prevent="selectFocus"
+			@keyup.up.stop.prevent="focusPrev"
+			@keydown.down.stop.prevent="focusNext"
+			@keydown.esc.stop.prevent="exit"
+		>
 			<p-filter v-show="filter_">
 				<p-tip>搜索</p-tip>
-				<Texter v-model="textFilter" filter :focus-switch="switchFocus" @keypress.enter="selectFocus" @keyup.up="focusPrev" @keydown.down="focusNext" />
+				<Texter v-model="textFilter" filter :focus-switch="switchFocus" />
 			</p-filter>
 			<p-options v-if="optionsSelected.length" selected>
-				<p-tip>已选</p-tip>
+				<p-tip>{{filter_ ? optionsSelected.length : ''}} 已选</p-tip>
 				<p-option v-for="(option, oid) of optionsSelected" :key="`combo-option-${oid}`"
 					:selected="brop(option.selected)"
 					:title="option.data?.[props.keyValue] ?? renderShow(option.data)"
@@ -178,20 +184,29 @@
 	});
 
 
+	const getDataValue = data => props.keyValue == '$$' ? data : data?.[props.keyValue];
+
+	const isEqual = (valueNow, valueOption) => {
+		const typeValueOption = typeof valueOption;
+
+		if(valueOption === null || typeValueOption == 'undefined' || typeValueOption == 'boolean') {
+			return valueNow === valueOption;
+		}
+
+		return valueNow == valueOption;
+	};
 
 	// 计算是否被选中
-	const isEqual = (valueNow, valueOption) =>
-		(valueOption === null || typeof valueOption == 'undefined' || typeof valueOption == 'boolean')
-			? valueNow === valueOption
-			: valueNow == valueOption;
+	const parseSelected = data => {
+		const valuesNow = values_.value;
+		const value = getDataValue(data);
 
-	const isSelect = option => {
-		const values = values_.value;
-		const target = props.keyValue == '$$' ? option : option[props.keyValue];
-
-		return multiSelect_.value
-			? !!~values.findIndex(value => isEqual(value, target))
-			: isEqual(values[0], target);
+		return {
+			selected: multiSelect_.value
+				? !!~valuesNow.findIndex(valueNow => isEqual(valueNow, value))
+				: isEqual(valuesNow[0], value),
+			value
+		};
 	};
 
 
@@ -214,10 +229,7 @@
 	const listRaw = computed(() => props.list);
 
 	// 主列表封装
-	const options = computed(() => {
-		return listRaw.value.map(data => ({ selected: isSelect(data), data }));
-		// .sort((a, b) => ~~b.selected - ~~a.selected);
-	});
+	const options = computed(() => listRaw.value.map(data => ({ data, ...parseSelected(data) })));
 	const optionsSelected = computed(() => options.value.filter(option => option.selected));
 	const optionsUnselected = computed(() =>
 		options.value.filter(option => !option.selected)
@@ -239,12 +251,13 @@
 	};
 	const textShow = computed(() =>
 		values_.value
-			.map(v => renderShow(listRaw.value.find(data => isEqual(props.keyValue == '$$' ? data : data?.[props.keyValue], v)), 1))
+			.map(v => renderShow(listRaw.value.find(data => isEqual(getDataValue(data), v)), 1))
 			.join('、')
 	);
 
 
 	const domValue = ref(null);
+	const domInput = ref(null);
 	const domDrop = ref(null);
 
 	const tippyDrop = ref(null);
@@ -252,12 +265,23 @@
 	const widthDropMin = ref('');
 
 	const isShowDrop = ref(false);
-	const atShowDrop = () => { isShowDrop.value = true; };
-	const atHideDrop = () => { isShowDrop.value = false; };
+	const atShowDrop = () => {
+		isShowDrop.value = true;
+
+		nextTick(() => filter_.value ? switchFocus.value = !switchFocus.value : domDrop.value.focus());
+	};
+	const atHideDrop = () => {
+		isShowDrop.value = false;
+
+		nextTick(() => (domInput.value.select(), domInput.value.focus()));
+	};
+
 
 	const switchFocus = ref(false);
 
 	const atClickDrop = () => {
+		if(disable_.value || readonly_.value) { return; }
+
 		const tippy = tippyDrop.value;
 
 		if(document.querySelector(`#tippy-${tippy.id}`)) {
@@ -268,16 +292,13 @@
 			widthDropMin.value = window.getComputedStyle(domValue.value).width;
 
 			tippy.show();
-
-
-			switchFocus.value = !switchFocus.value;
 		}
 	};
 
 
 	const select = option => {
 		option.selected = true;
-		value_.value = props.keyValue == '$$' ? option.data : option.data?.[props.keyValue];
+		value_.value = option.value;
 
 		tippyDrop.value.hide();
 	};
@@ -285,7 +306,7 @@
 		if(multiSelect_.value) {
 			option.selected = !!option.selected;
 
-			const valueNow = props.keyValue == '$$' ? option.data : option.data?.[props.keyValue];
+			const valueNow = option.value;
 
 			const setValues = new Set(values_.value);
 			if(setValues.has(valueNow)) {
@@ -338,16 +359,29 @@
 
 		nextTick(() => document.querySelector('p-option[focus-now]')?.scrollIntoView({ behavior: 'auto', block: 'center' }));
 	};
-	watch(optionsUnselected, () => indexFocus.value = 0);
+
+	const exit = () => {
+		if(filter_.value && textFilter.value) {
+			return textFilter.value = '';
+		}
+
+		return tippyDrop.value.hide();
+	};
+
+	watch(optionsUnselected, optionsUnselected => {
+		if(indexFocus.value >= optionsUnselected.length) {
+			indexFocus.value = optionsUnselected.length - 1;
+		}
+	});
 
 	const selectFocus = () => {
 		const option = optionsUnselected.value[indexFocus.value];
 
-		if(option) { select(option); }
+		if(option) { atClickSelect(option); }
 	};
 
 
-	watch(() => props.openSwitch, () => atClickDrop());
+	watch(() => props.openSwitch, atClickDrop);
 </script>
 
 <style lang="sass" scoped>
@@ -404,7 +438,7 @@ p-value
 
 
 p-drop
-	@apply block bg-white py-0 border-2 rounded-md shadow-mdd
+	@apply block bg-white py-0 border-2 rounded-md shadow-mdd outline-none
 	border-color: var(--colorMain)
 
 	p-filter
@@ -422,8 +456,9 @@ p-drop
 			@apply shadow-md
 			max-height: 8rem
 
+
 	p-tip
-		@apply absolute right-1 top-1 text-gray-400 text-xs select-none
+		@apply sticky float-right right-1 top-1 text-gray-400 text-xs select-none
 
 	p-option
 		@apply trans block px-2 cursor-pointer py-1
@@ -433,7 +468,7 @@ p-drop
 			color: var(--colorTextMain)
 
 		&[selected]
-			@apply font-bold py-2 font-bold
+			@apply font-bold font-bold
 			color: var(--colorMain)
 
 			&:hover

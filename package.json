@@ -1,6 +1,6 @@
 {
 	"name": "@nuogz/vue-components",
-	"version": "1.6.1",
+	"version": "1.7.0",
 	"description": "frontend components based on vue.js 3.x",
 	"author": "Nuogz",
 	"license": "LGPL-3.0-or-later",
@@ -29,7 +29,7 @@
 		"@vitejs/plugin-vue": "^3.1.0",
 		"autoprefixer": "^10.4.11",
 		"eslint": "^8.23.1",
-		"eslint-plugin-vue": "^9.4.0",
+		"eslint-plugin-vue": "^9.5.1",
 		"moment": "^2.29.4",
 		"postcss": "^8.4.16",
 		"sass": "^1.54.9",

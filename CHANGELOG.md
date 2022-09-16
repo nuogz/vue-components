@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## v1.7.0 - 2022.09.17 07
+* `Textbox` scrollbar is back
+* improve lots of `Combo` code
+* fix and improve `Combo` tabindex and focus
+* add and improve more keyborad shortcut to `Combo`
+
+
 ## v1.6.1 - 2022.09.16 10
 * fix `Click` icon type check
 
