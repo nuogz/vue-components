@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.6.0 - 2022.09.16 09
+* `Combo` will hide options after single select
+* `Combo` support `openSwitch` to control option hide and show
+* `Combo` support navigator by keypress
+
+
 ## v1.5.0 - 2022.09.13 10
 * add textarea component `Textbox`
 * bump up dependencies
