@@ -1,6 +1,6 @@
 {
 	"name": "@nuogz/vue-components",
-	"version": "1.6.0",
+	"version": "1.6.1",
 	"description": "frontend components based on vue.js 3.x",
 	"author": "Nuogz",
 	"license": "LGPL-3.0-or-later",

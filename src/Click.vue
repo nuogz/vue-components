@@ -13,7 +13,7 @@
 	defineProps({
 		text: { type: String, default: '' },
 		white: { type: [Boolean, String], default: false },
-		icon: { type: [String, Array], default: null },
+		icon: { type: [String, Array, Object], default: null },
 		spin: { type: [Boolean], default: false },
 	});
 </script>
