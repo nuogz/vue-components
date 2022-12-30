@@ -1,6 +1,6 @@
 {
 	"name": "@nuogz/vue-components",
-	"version": "1.8.0",
+	"version": "1.8.1",
 	"description": "frontend components based on vue.js 3.x",
 	"author": "Nuogz",
 	"license": "LGPL-3.0-or-later",
@@ -44,8 +44,7 @@
 		"@nuogz/utility": "^1.4.1",
 		"moment": "^2",
 		"tippy.js": "^6",
-		"@vitejs/plugin-vue": "^4",
-		"vue": "^4"
+		"vue": "^3"
 	},
 	"peerDependenciesMeta": {
 		"@fortawesome/free-solid-svg-icons": {

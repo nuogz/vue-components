@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v1.8.1 - 2022.12.30 20
+* fix `package.json` peerDependencies
+
+
 ## v1.8.0 - 2022.12.30 19
 * `Combo` support `dropAlign`
 * bump up dependencies
