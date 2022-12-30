@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v1.8.0 - 2022.12.30 19
+* `Combo` support `dropAlign`
+* bump up dependencies
+
 ## v1.7.0 - 2022.09.17 07
 * `Textbox` scrollbar is back
 * improve lots of `Combo` code

@@ -37,7 +37,7 @@
 				<p-option v-for="(option, oid) of optionsSelected" :key="`combo-option-${oid}`"
 					:selected="brop(option.selected)"
 					:title="option.data?.[props.keyValue] ?? renderShow(option.data)"
-					:style="{ textAlign: align }"
+					:style="{ textAlign: dropAlign || align }"
 					@click="atClickSelect(option)"
 				>
 					{{renderShow(option.data)}}
@@ -45,11 +45,11 @@
 			</p-options>
 			<p-options>
 				<p-tip>未选</p-tip>
-				<p-option v-if="!options.length" :style="{ textAlign: align }" disabled>无可用选项</p-option>
+				<p-option v-if="!options.length" :style="{ textAlign: dropAlign || align }" disabled>无可用选项</p-option>
 				<p-option v-for="(option, oid) of optionsUnselected" :key="`combo-option-${oid}`"
 					:selected="brop(option.selected)"
 					:title="option.data?.[props.keyValue] ?? renderShow(option.data)"
-					:style="{ textAlign: align }"
+					:style="{ textAlign: dropAlign || align }"
 					:focus-now="brop(indexFocus == oid)"
 					@click="atClickSelect(option)"
 				>
@@ -100,6 +100,8 @@
 		tab: { type: [Number, String], default: 0 },
 		// 文本对齐方式
 		align: { type: String, default: null },
+		// 下拉选项对齐方式
+		dropAlign: { type: String, default: null },
 
 		// 下拉列表
 		list: { type: Array, default: () => ([]) },
