@@ -8,15 +8,7 @@
 
 		<!-- 输入框 -->
 		<p-value class="inblock">
-			<textarea
-				ref="domInput"
-				v-model="value_"
-				:style="{ textAlign: align, height: height_ }"
-				:placeholder="place"
-				:tabindex="tab"
-				:readonly="readonly_"
-				:disabled="disable_"
-			/>
+			<p-drag ref="domDrag" @click="selectFile">{{ dragging ? '松开即可选入 <图片>' : '可拖入 <图片> 到此' }}</p-drag>
 		</p-value>
 	</comp-texter>
 </template>
@@ -24,7 +16,8 @@
 <script setup>
 	import { computed, ref, watch } from 'vue';
 
-	import { brop, parseBoolProp, toCSSLength } from '@nuogz/utility';
+	import brop from '../brop.js';
+	import parseBoolProp from '../parse-bool-attr.js';
 
 	import { props as propsCommon, setup as setupCommon } from './lib/label.js';
 
@@ -32,7 +25,7 @@
 
 	const props = defineProps({
 		// update主值
-		modelValue: { type: [String, Number, Boolean], default: '' },
+		modelValue: { type: [Array], default: () => [] },
 		// update是否禁用
 		disable: { type: Boolean, default: false },
 		// update综合主值
@@ -50,26 +43,18 @@
 		readonly: { type: [String, Boolean], default: false },
 
 
-		// 留空提示
-		place: { type: [Number, String], default: '' },
-		// 焦点顺序
-		tab: { type: [Number, String], default: 0 },
-		// 文本对齐方式
-		align: { type: String, default: null },
-		// 输入框高度
-		height: { type: [Number, String], default: undefined },
-
-		focusSwitch: { type: Boolean, default: false },
+		// 多选
+		multiSelect: { type: [String, Boolean], default: true },
 	});
 	const emit = defineEmits(['update:modelValue', 'update:disable', 'update:value']);
 
 
 	const disabling_ = computed(() => parseBoolProp(props.disabling));
 	const readonly_ = computed(() => parseBoolProp(props.readonly));
+	const multiSelect_ = computed(() => parseBoolProp(props.multiSelect));
 
 	const { label_, labelWidth_, labelAlign_ } = setupCommon(props, disabling_);
 
-	const height_ = computed(() => props.height == undefined ? undefined : toCSSLength(props.height));
 
 	const styleLabel = computed(() => ({ width: labelWidth_.value, textAlign: labelAlign_.value }));
 
@@ -105,11 +90,7 @@
 				emit('update:disable', disable);
 			}
 
-			emit('update:modelValue',
-				disable === true ?
-					false :
-					value
-			);
+			emit('update:modelValue', disable === true ? false : value);
 		}
 		else {
 			emit('update:modelValue', value);
@@ -117,8 +98,70 @@
 	});
 
 
-	const domInput = ref(null);
-	watch(() => props.focusSwitch, () => domInput.value.focus());
+
+
+
+	/** @type {import('vue').Ref<boolean>} */
+	const dragging = ref(false);
+
+
+	/** @type {import('vue').Ref<HTMLElement>} */
+	const domDrag = ref(null);
+
+
+	watch(domDrag, () => {
+		const dragger = domDrag.value;
+		if(!dragger) { return; }
+
+
+		dragger.addEventListener('dragenter', () => {
+			if(readonly_.value) { return; }
+
+
+			dragger.setAttribute('dragging', '');
+			dragging.value = true;
+		});
+		dragger.addEventListener('dragleave', () => {
+			if(readonly_.value) { return; }
+
+
+			dragger.removeAttribute('dragging');
+			dragging.value = false;
+		});
+		dragger.addEventListener('dragover', event => {
+			if(readonly_.value) { return; }
+
+
+			event.preventDefault();
+		});
+
+		dragger.addEventListener('drop', async event => {
+			if(readonly_.value) { return; }
+
+
+			event.preventDefault();
+			event.stopPropagation();
+
+			dragger.removeAttribute('dragging');
+			dragging.value = false;
+
+			value_.value = [...(event.dataTransfer?.files ?? [])];
+		});
+	});
+
+
+	const selectFile = () => {
+		if(readonly_.value) { return; }
+
+
+		const input = document.createElement('input');
+		input.type = 'file';
+		input.multiple = multiSelect_.value;
+
+		input.addEventListener('input', () => value_.value = [...(input.files ?? [])]);
+
+		input.click();
+	};
 </script>
 
 <style lang="sass" scoped>
@@ -145,13 +188,12 @@ p-label
 
 
 p-value
-	@apply block relative w-auto h-full overflow-hidden border-b-2 border-solid
+	@apply block relative w-auto h-full overflow-hidden border-solid
 	border-color: var(--colorMain)
-	padding: 0 0.25rem
 	z-index: 1
 
-	> textarea
-		@apply relative w-full h-full
+	> input
+		@apply relative w-full h-full overflow-hidden
 		outline: none
 		background: transparent
 		font-size: inherit
@@ -161,4 +203,15 @@ p-value
 
 		&::-webkit-inner-spin-button, &::-webkit-outer-spin-button
 			@apply appearance-none
+
+p-drag
+		@apply block h-24 m-2 leading-[calc(theme("spacing.1")*24)] text-xl text-center cursor-pointer
+		@apply border-2 border-dashed border-gray-400 text-gray-400
+
+		&:hover
+			color: var(--colorMain)
+			border-color: var(--colorMain)
+
+		&[dragging]
+			@apply border-solid border-sky-400 text-sky-400
 </style>

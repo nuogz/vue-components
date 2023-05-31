@@ -1,20 +1,19 @@
 <template>
 	<comp-pager>
 		<!-- 左翻 -->
-		<p-button :class="{ invalid: pageNow == 1 }" class="rounded-l-lg" @click.exact="atOffset(-1)">
+		<p-button :class="{ invalid: pageNow == 1 }" left @click.exact="atOffset(-1)">
 			<Icon :icon="faAngleLeft" />
 		</p-button>
 		<!-- 当前页数 -->
-
-		<input v-model="pageNow" type="text" class="inblock align-top value"	@keyup.enter="atOffset(0)" />
-		<div class="inblock align-top spliter">/</div>
+		<input v-model="pageNow" page-now type="text" @keyup.enter="atOffset(0)" />
+		<div spliter>/</div>
 		<!-- 最大页数 -->
-		<div class="inblock align-top page">{{pageMax}}</div>
+		<div page-max>{{ pageMax }}</div>
 		<!-- 右翻 -->
-		<p-button :class="{ invalid: pageNow >= pageMax }" class="rounded-r-lg" @click="atOffset(1)">
+		<p-button :class="{ invalid: pageNow >= pageMax }" right @click="atOffset(1)">
 			<Icon :icon="faAngleRight" />
 		</p-button>
-		<div v-if="!hider_().total" class="inblock ml-2 select-none">共 {{total}} 条</div>
+		<div v-if="!hider_().total" total>共 {{ total }} 条</div>
 	</comp-pager>
 </template>
 
@@ -84,18 +83,18 @@ comp-pager
 	@apply relative
 
 	>*
-		@apply border-none text-center bg-transparent
+		@apply inblock h-full border-none text-center bg-transparent
 
 	p-button
-		@apply relative box-border cursor-pointer h-full inblock align-top border-2 border-solid border-transparent
+		@apply relative cursor-pointer
+		@apply border border-solid
 		width: 2rem
-		font-size: 1.4rem
-		line-height: 1.8rem
-		box-shadow: 0px -6px 10px rgb(255 255 255), 0px 4px 15px rgb(0 0 0 / 15%)
+		border-color: var(--colorMain)
+		color: var(--colorMain)
+		background-color: var(--colorTextMain)
 
 		&:not(.split):hover
-			color: var(--colorMain)
-			border-color: steelblue
+			@apply shadow-md filter brightness-110
 
 		&.invalid
 			@apply cursor-not-allowed
@@ -105,8 +104,14 @@ comp-pager
 				@apply bg-transparent
 				border-color: steelblue
 
-	.value
-		@apply relative box-border h-full p-0 outline-none align-baseline border-b-2 border-solid
+		&[left]
+			@apply rounded-l-sm mr-2
+
+		&[right]
+			@apply rounded-r-sm ml-2
+
+	[page-now]
+		@apply relative p-0 outline-none align-baseline border-b-2 border-solid
 
 		width: 2.4rem
 		color: var(--colorText)
@@ -116,6 +121,13 @@ comp-pager
 
 		&:hover
 			border-image: linear-gradient(270deg, var(--colorMain) 64%, rgba(1,133,224,0.7) 92%) 1
-.page
-	width: 2.4rem
+
+	[spliter]
+		@apply mx-1
+
+	[page-max]
+		width: 2.4rem
+
+	[total]
+		@apply ml-2 select-none
 </style>

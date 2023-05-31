@@ -14,7 +14,8 @@
 						:no-padding="brop(!(head.padding ?? isShowPadding))"
 						:no-border="brop(!isShowBorder)"
 					>
-						{{head.text}}
+						{{ head.text }}
+						<Icon v-if="head.sort" sort-icon :_enable="brop(sorts.find(s => s.index == head.index)?.direct)" :icon="icons_sortDirect[sorts.find(s => s.index == head.index)?.direct] ?? faArrowDownUpAcrossLine" @click="atSort(head)" />
 					</th>
 				</tr>
 			</table>
@@ -26,27 +27,71 @@
 			@scroll="onScrollBody"
 		>
 			<table body>
-				<tr v-for="(data, did) of datas" row
-					:selected="brop(isShowSelect && selected == data)"
-					:hover="brop(isShowSelect)"
-					@dblclick="onDblclick(data)"
-				>
-					<td v-for="head of headsRaw" cell
-						:_lastInRow="brop(did == datas.length - 1)"
-
-						:title="data[head.index]"
-
-						:style="styleCell(head, 'body')"
-						:no-padding="brop(!(head.padding ?? isShowPadding))"
-						:no-border="brop(!isShowBorder)"
-						:even="brop(isShowOdd && !(did%2))"
-						:odd="brop(isShowOdd && did%2)"
-
-						@click="isShowSelect && atSelectData(data)"
+				<template v-for="(data, did) of datas">
+					<tr row
+						:selected="brop(isShowSelect && selected == data)"
+						:hover="brop(isShowSelect)"
+						@dblclick="onDblclick(data)"
 					>
-						{{data[head.index]}}
-					</td>
-				</tr>
+						<template v-for="head of headsRaw">
+							<template v-if="head.slot === true">
+								<td cell
+									:_lastInRow="brop(did == datas.length - 1)"
+
+									:title="data[head.index]"
+
+									:style="styleCell(head, 'body', head.whiteSpace)"
+									:no-padding="brop(!(head.padding ?? isShowPadding))"
+									:no-border="brop(!isShowBorder)"
+									:even="brop(isShowOdd && !(did % 2))"
+									:odd="brop(isShowOdd && did % 2)"
+								>
+									<slot :name="`column-${head.index}`" :data="data" />
+								</td>
+							</template>
+							<template v-else-if="head.html === true">
+								<td cell
+									:_lastInRow="brop(did == datas.length - 1)"
+
+									:title="data[head.indexTitle]"
+
+									:style="styleCell(head, 'body', head.whiteSpace)"
+									:no-padding="brop(!(head.padding ?? isShowPadding))"
+									:no-border="brop(!isShowBorder)"
+									:even="brop(isShowOdd && !(did % 2))"
+									:odd="brop(isShowOdd && did % 2)"
+									v-html="data[head.index]"
+								/>
+							</template>
+							<template v-else>
+								<td cell
+									:_lastInRow="brop(did == datas.length - 1)"
+
+									:title="data[head.index]"
+
+									:style="styleCell(head, 'body', head.whiteSpace)"
+									:no-padding="brop(!(head.padding ?? isShowPadding))"
+									:no-border="brop(!isShowBorder)"
+									:even="brop(isShowOdd && !(did % 2))"
+									:odd="brop(isShowOdd && did % 2)"
+
+									@click="atSelectData(data)"
+								>
+									{{ data[head.index] }}
+								</td>
+							</template>
+						</template>
+					</tr>
+					<tr v-if="data.$expanded" row
+						:selected="brop(isShowSelect && selected == data)"
+						:hover="brop(isShowSelect)"
+						@dblclick="onDblclick(data)"
+					>
+						<td expand :colspan="headsRaw.length">
+							<slot name="expand" :data="data" />
+						</td>
+					</tr>
+				</template>
 			</table>
 		</p-body>
 	</comp-grid>
@@ -56,6 +101,9 @@
 	import { computed, ref, watch } from 'vue';
 
 	import { brop, parseBoolProp, toCSSLength } from '@nuogz/utility';
+
+	import { FontAwesomeIcon as Icon } from '@fortawesome/vue-fontawesome';
+	import { faArrowDownUpAcrossLine, faArrowDown91, faArrowDown19 } from '@fortawesome/free-solid-svg-icons';
 
 
 
@@ -95,7 +143,7 @@
 
 
 	});
-	const emit = defineEmits(['update:modelValue']);
+	const emit = defineEmits(['update:modelValue', 'sort']);
 
 
 	// 开关
@@ -108,7 +156,7 @@
 
 
 	// 表头
-	const headsRaw = computed(() => props.heads);
+	const headsRaw = computed(() => props.heads.filter(head => !head.hide));
 	const heads = computed(() => {
 		let stackMax = 1;
 		const headsStack = [[]];
@@ -116,8 +164,6 @@
 
 
 		headsRaw.value.forEach(col => {
-			if(col.hide) { return; }
-
 			const heads = col.text.split('|').reverse();
 
 
@@ -167,6 +213,42 @@
 	});
 
 
+
+	const icons_sortDirect = {
+		'ASC': faArrowDown19,
+		'DESC': faArrowDown91,
+	};
+	const sorts = ref([]);
+
+	const atSort = head => {
+		const $sorts = sorts.value;
+		const index = head.index;
+
+
+		let sort = $sorts.find(sort => sort.index == index);
+		if(!sort) { $sorts.push(sort = { index, direct: '' }); }
+
+
+		if(sort.direct == '') {
+			sort.direct = 'ASC';
+		}
+		else if(sort.direct == 'ASC') {
+			sort.direct = 'DESC';
+		}
+		else if(sort.direct == 'DESC') {
+			const index = $sorts.findIndex(s => s === sort);
+
+			if(!~index) { return; }
+
+			$sorts.splice(index, 1);
+		}
+
+
+		emit('sort', $sorts.filter(sort => sort.direct).map(sort => `${sort.index} ${sort.direct}`).join(','));
+	};
+
+
+
 	// 行高 格式：行高|(表头行高)
 	const heightRowRaw = computed(() => props.rowHeight);
 	const heightRow = computed(() => {
@@ -188,13 +270,13 @@
 
 
 	// 单元格样式
-	const styleCell = (head, type) => ({
+	const styleCell = (head, type, whiteSpace) => ({
 		width: toCSSLength(head.width ?? 60),
 		minWidth: toCSSLength(head.width ?? 60),
 		maxWidth: toCSSLength(head.width ?? 60),
 		textAlign: head.align,
 		height: heightRow.value[type],
-		lineHeight: heightRow.value[type],
+		whiteSpace,
 	});
 
 
@@ -240,20 +322,26 @@ comp-grid
 			[cell][_lastInRow]
 				@apply text-gray-500
 
+				[sort-icon]
+					@apply absolute h-4 top-2 right-2 cursor-pointer
+
+					&[_enable]
+						color: var(--colorOkay)
+
 		&[body]
-			[row]
-				[cell]
+			>[row]
+				>[cell]
 					&[even]
 						@apply bg-white
 					&[odd]
 						@apply bg-gray-100
 
 				&[hover]:hover
-					[cell]
+					>[cell]
 						@apply bg-blue-100 cursor-pointer
 
 				&[selected]
-					[cell]
+					>[cell]
 						cursor: default !important
 						background-color: theme("colors.green.100") !important
 
@@ -264,8 +352,11 @@ comp-grid
 			&:first-child [cell]
 				@apply border-t-0
 
+			[expand]
+				@apply relative p-0
+
 			[cell]
-				@apply relative overflow-hidden whitespace-nowrap overflow-ellipsis px-2 border border-gray-300
+				@apply relative overflow-hidden whitespace-nowrap overflow-ellipsis p-2 border border-gray-300
 
 				&:first-child
 					@apply border-l-0

@@ -1,10 +1,10 @@
 <template>
 	<comp-combo>
 		<!-- 禁用 -->
-		<p-disabling v-if="disabling_" :checked="brop(!disable_)" @click="disable_ = ! disable_" />
+		<p-disabling v-if="disabling_" :checked="brop(!disable_)" @click="disable_ = !disable_" />
 
 		<!-- 标签 -->
-		<p-label v-if="label_" :style="styleLabel" @click="disabling_ && (disable_ = ! disable_)">{{ label_ }}</p-label>
+		<p-label v-if="label_" :style="styleLabel" @click="disabling_ && (disable_ = !disable_)">{{ label_ }}</p-label>
 
 		<!-- 输入框 -->
 		<p-value ref="domValue" :hide-outline="brop(isShowDrop)" :only="brop(!disabling_ && !label_)" @click="atClickDrop($event)">
@@ -33,18 +33,18 @@
 				<Texter v-model="textFilter" filter :focus-switch="switchFocus" />
 			</p-filter>
 			<p-options v-if="optionsSelected.length" selected>
-				<p-tip>{{filter_ ? optionsSelected.length : ''}} 已选</p-tip>
+				<p-tip>{{ filter_ ? optionsSelected.length : '' }} 已选</p-tip>
 				<p-option v-for="(option, oid) of optionsSelected" :key="`combo-option-${oid}`"
 					:selected="brop(option.selected)"
 					:title="option.data?.[props.keyValue] ?? renderShow(option.data)"
 					:style="{ textAlign: dropAlign || align }"
 					@click="atClickSelect(option)"
 				>
-					{{renderShow(option.data)}}
+					{{ renderShow(option.data) }}
 				</p-option>
 			</p-options>
 			<p-options>
-				<p-tip>未选</p-tip>
+				<p-tip :first="brop(indexFocus == 0)">未选</p-tip>
 				<p-option v-if="!options.length" :style="{ textAlign: dropAlign || align }" disabled>无可用选项</p-option>
 				<p-option v-for="(option, oid) of optionsUnselected" :key="`combo-option-${oid}`"
 					:selected="brop(option.selected)"
@@ -53,7 +53,7 @@
 					:focus-now="brop(indexFocus == oid)"
 					@click="atClickSelect(option)"
 				>
-					{{renderShow(option.data)}}
+					{{ renderShow(option.data) }}
 				</p-option>
 			</p-options>
 		</p-drop>
@@ -62,6 +62,7 @@
 
 <script setup>
 	import { computed, nextTick, onMounted, ref, watch } from 'vue';
+
 	import { FontAwesomeIcon as Icon } from '@fortawesome/vue-fontawesome';
 	import { faAngleDown, faAngleUp } from '@fortawesome/free-solid-svg-icons';
 	import Tippy from 'tippy.js';
@@ -114,6 +115,12 @@
 		// 数据键值
 		keyValue: { type: String, default: 'value' },
 
+		// 数据分隔符
+		separatorValue: { type: String, default: ',' },
+		// 显示分隔符
+		separatorShow: { type: String, default: '、' },
+
+		// 下拉开关切换
 		openSwitch: { type: Boolean, default: false },
 	});
 	const emit = defineEmits(['update:modelValue', 'update:disable', 'update:value']);
@@ -254,7 +261,7 @@
 	const textShow = computed(() =>
 		values_.value
 			.map(v => renderShow(listRaw.value.find(data => isEqual(getDataValue(data), v)), 1))
-			.join('、')
+			.join(props.separatorShow)
 	);
 
 
@@ -323,7 +330,7 @@
 				value_.value = values;
 			}
 			else {
-				value_.value = values.join(',');
+				value_.value = values.join(props.separatorValue);
 			}
 		}
 		else {
@@ -451,7 +458,7 @@ p-drop
 
 
 	p-options
-		@apply block relative overflow-x-hidden overflow-y-scroll
+		@apply block relative overflow-x-hidden overflow-y-scroll mb-2 select-none
 		max-height: 24rem
 
 		&[selected]
@@ -460,7 +467,10 @@ p-drop
 
 
 	p-tip
-		@apply sticky float-right right-1 top-1 text-gray-400 text-xs select-none
+		@apply sticky float-right right-1 top-1 text-gray-400 text-xs select-none z-50
+
+		&[first]
+			@apply text-white
 
 	p-option
 		@apply trans block px-2 cursor-pointer py-1

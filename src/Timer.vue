@@ -1,10 +1,10 @@
 <template>
 	<comp-combo>
 		<!-- 禁用 -->
-		<p-disabling v-if="disabling_" class="inblock" :checked="brop(!disable_)" @click="disable_ = ! disable_" />
+		<p-disabling v-if="disabling_" class="inblock" :checked="brop(!disable_)" @click="disable_ = !disable_" />
 
 		<!-- 标签 -->
-		<p-label v-if="label_" class="inblock elli" :style="styleLabel" @click="disabling_ && (disable_ = ! disable_)">{{ label_ }}</p-label>
+		<p-label v-if="label_" class="inblock elli" :style="styleLabel" @click="disabling_ && (disable_ = !disable_)">{{ label_ }}</p-label>
 
 		<!-- 输入框 -->
 		<p-value ref="domValue" class="inblock" @click="!disable_ && !$readonly && atClickDrop()">
@@ -22,12 +22,15 @@
 		<!-- 下拉列表 -->
 		<p-drop ref="domDrop" tabindex="0">
 			<p-drop-values>
-				<p-drop-value v-if="isShowOptionsYear"><span>{{momentValueSafe.format('YYYY')}}</span>年</p-drop-value>
-				<p-drop-value v-if="isShowOptionsMonth"><span>{{momentValueSafe.format('MM')}}</span>月</p-drop-value>
-				<p-drop-value v-if="isShowOptionsDate"><span>{{momentValueSafe.format('DD')}}</span>日</p-drop-value>
-				<p-drop-value v-if="isShowOptionsHour"><span>{{momentValueSafe.format('HH')}}</span>时</p-drop-value>
-				<p-drop-value v-if="isShowOptionsMinute"><span>{{momentValueSafe.format('mm')}}</span>分</p-drop-value>
-				<p-drop-value v-if="isShowOptionsSecond"><span>{{momentValueSafe.format('SS')}}</span>秒</p-drop-value>
+				<p-drop-value v-if="isShowOptionsYear"><span>{{ momentValueSafe.format('YYYY') }}</span>年</p-drop-value>
+				<p-drop-value v-if="isShowOptionsMonth"><span>{{ momentValueSafe.format('MM') }}</span>月</p-drop-value>
+				<p-drop-value v-if="isShowOptionsDate"><span>{{ momentValueSafe.format('DD') }}</span>日</p-drop-value>
+				<p-drop-value v-if="isShowOptionsHour"><span>{{ momentValueSafe.format('HH') }}</span>时</p-drop-value>
+				<p-drop-value v-if="isShowOptionsMinute"><span>{{ momentValueSafe.format('mm') }}</span>分</p-drop-value>
+				<p-drop-value v-if="isShowOptionsSecond"><span>{{ momentValueSafe.format('ss') }}</span>秒</p-drop-value>
+				<Click white text="向前一天" @click="atSelect('day-add', -1)" />
+				<Click white text="当前时间" @click="atSelect('now')" />
+				<Click white text="向后一天" @click="atSelect('day-add', 1)" />
 			</p-drop-values>
 			<p-drop-options-box>
 				<p-drop-options v-if="isShowOptionsYear">
@@ -35,7 +38,7 @@
 						:selected="option.select || undefined"
 						@click="atSelect('year', option.data)"
 					>
-						{{option.data}}
+						{{ option.data }}
 					</p-drop-option>
 				</p-drop-options>
 				<p-drop-options v-if="isShowOptionsMonth">
@@ -43,7 +46,7 @@
 						:selected="option.select || undefined"
 						@click="atSelect('month', option.data - 1)"
 					>
-						{{option.data}}
+						{{ option.data }}
 					</p-drop-option>
 				</p-drop-options>
 				<p-drop-options v-if="isShowOptionsDate" date>
@@ -51,7 +54,7 @@
 						v-for="(option, oid) of optionsDay" :key="`Timer-day-${oid}`" day
 						:style="{ left: `${-(oid % 7) + 3}px` }"
 					>
-						{{option}}
+						{{ option }}
 					</p-drop-option-date>
 					<p-drop-option-date
 						v-for="(option, oid) of optionsDate" :key="`Timer-date-${oid}`"
@@ -65,7 +68,7 @@
 						:style="{ top: `-${parseInt(oid / 7)}px`, left: `${-(oid % 7) + 3}px` }"
 						@click="atSelect('fulldate', option)"
 					>
-						{{option.date}}
+						{{ option.date }}
 					</p-drop-option-date>
 				</p-drop-options>
 				<p-drop-options v-if="isShowOptionsHour">
@@ -73,7 +76,7 @@
 						:selected="option.select || undefined"
 						@click="atSelect('hour', modeEndTime == 2 ? option.data - 1 : option.data)"
 					>
-						{{option.data}}
+						{{ option.data }}
 					</p-drop-option>
 				</p-drop-options>
 				<p-drop-options v-if="isShowOptionsMinute">
@@ -81,7 +84,7 @@
 						:selected="option.select || undefined"
 						@click="atSelect('minute', modeEndTime == 2 ? option.data - 1 : option.data)"
 					>
-						{{option.data}}
+						{{ option.data }}
 					</p-drop-option>
 				</p-drop-options>
 				<p-drop-options v-if="isShowOptionsSecond">
@@ -89,7 +92,7 @@
 						:selected="option.select || undefined"
 						@click="atSelect('second', modeEndTime == 2 ? option.data - 1 : option.data)"
 					>
-						{{option.data}}
+						{{ option.data }}
 					</p-drop-option>
 				</p-drop-options>
 			</p-drop-options-box>
@@ -99,12 +102,15 @@
 
 <script setup>
 	import { computed, nextTick, onMounted, ref, watch } from 'vue';
-	import Moment from 'moment';
+	import Day from 'dayjs';
 	import Tippy from 'tippy.js';
 
 	import { brop, parseBoolProp } from '@nuogz/utility';
 
 	import { props as propsCommon, setup as setupCommon } from './lib/label.js';
+
+
+	import Click from './Click.vue';
 
 
 
@@ -162,7 +168,9 @@
 		// 可选结束时间(时间输入控件特有)
 		end: { type: [Number, String], default: '' },
 		// 显示格式
-		formater: { type: [Function, String], default: null },
+		showFormatter: { type: [Function, String], default: null },
+		// 输出格式
+		valueFormatter: { type: [String], default: null },
 		// 结束时间模式 true, 结束模式, 即24:60:60; false, 23:59:59; show, 显示24:60:60, 传23:59:59
 		endTimeMode: { type: [Boolean, String], default: false }
 	});
@@ -214,12 +222,13 @@
 
 	// 响应参数
 	const $readonly = computed(() => parseBoolProp(props.readonly));
-	const $formater = ref(props.formater);
+	const $showFormatter = ref(props.showFormatter);
+	const $valueFormatter = ref(props.valueFormatter);
 	const $param = ref(props.param);
 	const $begin = ref(props.begin);
 	const $end = ref(props.end);
 	const $endTimeMode = ref(props.endTimeMode);
-	// const $formater = computed(() => props.formater);
+	// const $showFormatter = computed(() => props.showFormatter);
 	// const $param = computed(() => props.param);
 	// const $begin = computed(() => props.begin);
 	// const $end = computed(() => props.end);
@@ -259,32 +268,32 @@
 	const isShowOptionsMinute = computed(() => ranger(4, timeRange_.value));
 	const isShowOptionsSecond = computed(() => ranger(5, timeRange_.value));
 	/** 对应模式下的日期格式 */
-	const format = computed(() => formatsType[`${timeRange_.value.start}${timeRange_.value.end}`]);
+	const format = computed(() => $valueFormatter.value || formatsType[`${timeRange_.value.start}${timeRange_.value.end}`]);
 	/** 对应模式下的展示格式 */
 	const sormat = computed(() => formatsShow[`${timeRange_.value.start}${timeRange_.value.end}`]);
 
 	// 最早的可选时间
 	const timeBegin_ = computed(() => {
-		const time = Moment($begin.value, format.value);
+		const time = Day($begin.value, format.value);
 		return time.isValid() ? time : null;
 	});
 	// 最晚的可选时间
 	const timeEnd_ = computed(() => {
-		const time = Moment($end.value, format.value);
+		const time = Day($end.value, format.value);
 		return time.isValid() ? time : null;
 	});
 
 	/** 当前时间的Moment封装 */
-	const momentValue = computed(() => Moment(value_.value));
-	const momentValueSafe = computed(() => momentValue.value.isValid() ? momentValue.value : Moment().startOf('day'));
+	const momentValue = computed(() => Day(value_.value));
+	const momentValueSafe = computed(() => momentValue.value.isValid() ? momentValue.value : Day().startOf('day'));
 	/** 当前时间的显示值 */
 	const textShow = computed(() => {
 		if(momentValue.value.isValid()) {
-			if(typeof $formater.value == 'string') {
-				return momentValue.value.format($formater.value);
+			if(typeof $showFormatter.value == 'string') {
+				return momentValue.value.format($showFormatter.value);
 			}
-			else if(typeof $formater.value == 'function') {
-				return $formater(momentValue.value);
+			else if(typeof $showFormatter.value == 'function') {
+				return $showFormatter(momentValue.value);
 			}
 			else {
 				return momentValue.value.format(sormat.value);
@@ -300,7 +309,7 @@
 	const optionsYear = computed(() => {
 		const options = [];
 
-		const yearNow = Moment().year();
+		const yearNow = Day().year();
 		let year = yearNow + 4;
 		while(year >= yearNow - 7) {
 			options.push({
@@ -352,7 +361,7 @@
 				tailWeek: cursor.diff(tailDay, 'days') > -7,
 			});
 
-			cursor.add(1, 'days');
+			cursor = cursor.add(1, 'days');
 		}
 
 		let preFill = headDay.weekday() == 6 ? 14 : headDay.weekday() + 15;
@@ -466,16 +475,27 @@
 		}
 	};
 	const atSelect = (type, data) => {
-		if(type == 'fulldate' && !data.outRange) {
-			momentValueSafe.value.year(data.year);
-			momentValueSafe.value.month(data.month - 1);
-			momentValueSafe.value.date(data.date);
+		let momentNew;
+
+
+		if(type == 'now') {
+			momentNew = Day();
+		}
+		else if(type == 'day-add') {
+			momentNew = momentValueSafe.value.add(data, 'day');
+		}
+		else if(type == 'fulldate' && !data.outRange) {
+			momentNew = momentValueSafe.value.year(data.year).month(data.month - 1).date(data.date);
 		}
 		else {
-			momentValueSafe.value[type](data);
+			momentNew = momentValueSafe.value[type](data);
 		}
 
-		value_.value = momentValueSafe.value.format(format.value);
+
+		value_.value = momentNew.format(format.value);
+
+
+		atShowDrop();
 	};
 
 	onMounted(() => {
@@ -541,17 +561,22 @@ p-drop
 	border-color: var(--colorMain)
 	p-drop-values
 		@apply block px-2
+
 		p-drop-value
 			@apply text-xs leading-8
 			color: var(--colorText)
 			span
 				@apply px-1 text-base leading-8
 				color: var(--colorMain)
+
+		comp-click
+			@apply ml-2
+
 	p-drop-options-box
 		@apply px-1
 
 		p-drop-options
-			@apply inline-block align-top h-[calc(theme("spacing.1")*78)] overflow-x-hidden overflow-y-auto border-r border-transparent
+			@apply inline-block align-top h-[calc(theme("spacing.1")*78)] overflow-x-hidden overflow-y-auto border-r border-transparent select-none
 
 
 			&:not(:last-child)

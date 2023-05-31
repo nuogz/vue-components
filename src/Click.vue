@@ -1,6 +1,6 @@
 <template>
-	<comp-click :white="brop(white)">
-		<Icon v-if="icon" class="inline icon" :icon="icon" :spin="spin" />{{icon ? ' ': ''}}{{text}}
+	<comp-click :white="brop(white)" :title="text">
+		<Icon v-if="icon" class="inline icon" :icon="icon" :spin="spin" />{{ icon ? ' ' : '' }}{{ text }}
 	</comp-click>
 </template>
 
@@ -8,6 +8,7 @@
 	import { brop } from '@nuogz/utility';
 
 	import { FontAwesomeIcon as Icon } from '@fortawesome/vue-fontawesome';
+
 
 
 	defineProps({
@@ -20,7 +21,7 @@
 
 <style lang="sass" scoped>
 comp-click
-	@apply px-2 rounded-sm cursor-pointer text-center select-none
+	@apply px-2 rounded-sm cursor-pointer text-center select-none elli
 	background-color: var(--colorMain)
 	color: var(--colorTextMain)
 
