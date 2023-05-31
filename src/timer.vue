@@ -105,7 +105,7 @@
 	import Day from 'dayjs';
 	import Tippy from 'tippy.js';
 
-	import { brop, parseBoolProp } from '@nuogz/utility';
+	import { brop, bropBoolean } from '@nuogz/utility';
 
 	import { props as propsCommon, setup as setupCommon } from './lib/label.js';
 
@@ -176,7 +176,7 @@
 	});
 
 
-	const disabling_ = computed(() => parseBoolProp(props.disabling));
+	const disabling_ = computed(() => bropBoolean(props.disabling));
 	const value_ = ref(disabling_.value ? (props.modelValue === false ? props.default : props.modelValue) : props.modelValue);
 	const disable_ = ref(disabling_.value ? (props.modelValue === false ? true : false) : props.disable);
 
@@ -221,7 +221,7 @@
 	const styleLabel = computed(() => ({ width: labelWidth_.value, textAlign: labelAlign_.value }));
 
 	// 响应参数
-	const $readonly = computed(() => parseBoolProp(props.readonly));
+	const $readonly = computed(() => bropBoolean(props.readonly));
 	const $showFormatter = ref(props.showFormatter);
 	const $valueFormatter = ref(props.valueFormatter);
 	const $param = ref(props.param);
@@ -403,7 +403,7 @@
 		return options;
 	});
 
-	const modeEndTime = computed(() => $endTimeMode.value == 'show' ? 2 : ~~parseBoolProp($endTimeMode.value));
+	const modeEndTime = computed(() => $endTimeMode.value == 'show' ? 2 : ~~bropBoolean($endTimeMode.value));
 	const optionsHour = computed(() => {
 		const options = [];
 

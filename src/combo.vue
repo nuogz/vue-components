@@ -67,7 +67,7 @@
 	import { faAngleDown, faAngleUp } from '@fortawesome/free-solid-svg-icons';
 	import Tippy from 'tippy.js';
 
-	import { brop, parseBoolProp } from '@nuogz/utility';
+	import { brop, bropBoolean } from '@nuogz/utility';
 
 	import { props as propsCommon, setup as setupCommon } from './lib/label.js';
 
@@ -126,9 +126,9 @@
 	const emit = defineEmits(['update:modelValue', 'update:disable', 'update:value']);
 
 
-	const multiSelect_ = computed(() => props.multiSelect === 'array' ? props.multiSelect : parseBoolProp(props.multiSelect));
-	const disabling_ = computed(() => parseBoolProp(props.disabling));
-	const readonly_ = computed(() => parseBoolProp(props.readonly));
+	const multiSelect_ = computed(() => props.multiSelect === 'array' ? props.multiSelect : bropBoolean(props.multiSelect));
+	const disabling_ = computed(() => bropBoolean(props.disabling));
+	const readonly_ = computed(() => bropBoolean(props.readonly));
 
 	const { label_, labelWidth_, labelAlign_ } = setupCommon(props, disabling_);
 
@@ -221,7 +221,7 @@
 
 	// 默认过滤函数
 	const textFilter = ref('');
-	const filter_ = computed(() => typeof props.filter == 'function' ? props.filter : parseBoolProp(props.filter));
+	const filter_ = computed(() => typeof props.filter == 'function' ? props.filter : bropBoolean(props.filter));
 	const filter = (option, index, options) => {
 		const serach = textFilter.value?.trim() ?? '';
 

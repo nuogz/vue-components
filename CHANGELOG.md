@@ -1,5 +1,26 @@
 # CHANGELOG
 
+## v1.9.0 - 2023.05.31 10
+* (new) add `ImageDragger`
+* update components
+	* `Click`: show text as title tips; improve style
+	* `Combo`: support new props `separatorValue` and `separatorShow`; improve style
+	* `Grid`: support columns sorting; improve style
+	* `Grid`: support `expand` slot; 
+	* `Grid`: support `column` slot; 
+	* `Pager`: renew style
+	* `Timer`: use `Day.js` instead `Moment.js`;
+	* `Timer`: add easy button: `prev(next) day` and `current time` 
+	* `Timer`: split prop `formatter` to 2 new props: `showFormatter` and `valueFormatter`
+* use eslint flat config, and related config udpate
+	* use `eslint.config.js` instead `eslintrc.cjs`
+* update recommanded extensions
+	* use `Volar` instead `Vetur`
+* use `bropBoolean` instead `parseBoolProp`
+* renew base config
+* add declaration files
+
+
 ## v1.8.1 - 2022.12.30 20
 * fix `package.json` peerDependencies
 

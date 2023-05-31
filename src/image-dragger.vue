@@ -16,8 +16,7 @@
 <script setup>
 	import { computed, ref, watch } from 'vue';
 
-	import brop from '../brop.js';
-	import parseBoolProp from '../parse-bool-attr.js';
+	import { brop, bropBoolean } from '@nuogz/utility';
 
 	import { props as propsCommon, setup as setupCommon } from './lib/label.js';
 
@@ -49,9 +48,9 @@
 	const emit = defineEmits(['update:modelValue', 'update:disable', 'update:value']);
 
 
-	const disabling_ = computed(() => parseBoolProp(props.disabling));
-	const readonly_ = computed(() => parseBoolProp(props.readonly));
-	const multiSelect_ = computed(() => parseBoolProp(props.multiSelect));
+	const disabling_ = computed(() => bropBoolean(props.disabling));
+	const readonly_ = computed(() => bropBoolean(props.readonly));
+	const multiSelect_ = computed(() => bropBoolean(props.multiSelect));
 
 	const { label_, labelWidth_, labelAlign_ } = setupCommon(props, disabling_);
 

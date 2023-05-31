@@ -1,6 +1,6 @@
 import { computed } from 'vue';
 
-import { parseBoolProp } from '@nuogz/utility';
+import { bropBoolean } from '@nuogz/utility';
 
 
 
@@ -20,7 +20,7 @@ export const props = {
 };
 
 export const setup = (props, disabling_) => {
-	const labelTextOnly_ = computed(() => parseBoolProp(props.labelTextOnly));
+	const labelTextOnly_ = computed(() => bropBoolean(props.labelTextOnly));
 
 	const labelQuick = computed(() => {
 		const { label } = props;

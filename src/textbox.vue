@@ -24,7 +24,7 @@
 <script setup>
 	import { computed, ref, watch } from 'vue';
 
-	import { brop, parseBoolProp, toCSSLength } from '@nuogz/utility';
+	import { brop, bropBoolean, toCSSLength } from '@nuogz/utility';
 
 	import { props as propsCommon, setup as setupCommon } from './lib/label.js';
 
@@ -64,8 +64,8 @@
 	const emit = defineEmits(['update:modelValue', 'update:disable', 'update:value']);
 
 
-	const disabling_ = computed(() => parseBoolProp(props.disabling));
-	const readonly_ = computed(() => parseBoolProp(props.readonly));
+	const disabling_ = computed(() => bropBoolean(props.disabling));
+	const readonly_ = computed(() => bropBoolean(props.readonly));
 
 	const { label_, labelWidth_, labelAlign_ } = setupCommon(props, disabling_);
 

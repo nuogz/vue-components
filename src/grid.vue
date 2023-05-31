@@ -100,7 +100,7 @@
 <script setup>
 	import { computed, ref, watch } from 'vue';
 
-	import { brop, parseBoolProp, toCSSLength } from '@nuogz/utility';
+	import { brop, bropBoolean, toCSSLength } from '@nuogz/utility';
 
 	import { FontAwesomeIcon as Icon } from '@fortawesome/vue-fontawesome';
 	import { faArrowDownUpAcrossLine, faArrowDown91, faArrowDown19 } from '@fortawesome/free-solid-svg-icons';
@@ -147,12 +147,12 @@
 
 
 	// 开关
-	const isShowHead = computed(() => parseBoolProp(props.showHead));
-	const isShowBody = computed(() => parseBoolProp(props.showBody));
-	const isShowPadding = computed(() => parseBoolProp(props.showPadding));
-	const isShowOdd = computed(() => parseBoolProp(props.showOdd));
-	const isShowBorder = computed(() => parseBoolProp(props.showBorder));
-	const isShowSelect = computed(() => parseBoolProp(props.showSelect));
+	const isShowHead = computed(() => bropBoolean(props.showHead));
+	const isShowBody = computed(() => bropBoolean(props.showBody));
+	const isShowPadding = computed(() => bropBoolean(props.showPadding));
+	const isShowOdd = computed(() => bropBoolean(props.showOdd));
+	const isShowBorder = computed(() => bropBoolean(props.showBorder));
+	const isShowSelect = computed(() => bropBoolean(props.showSelect));
 
 
 	// 表头
