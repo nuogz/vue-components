@@ -5,17 +5,17 @@ import { bropBoolean } from '@nuogz/utility';
 
 
 export const props = {
-	// 控件快速控制
+	/** 控件快速控制 */
 	param: { type: String, default: null },
-	// 标签
+	/** 标签 */
 	label: { type: String, default: null },
-	// 标签-宽度
+	/** 标签-宽度 */
 	labelWidth: { type: String, default: null },
-	// 标签-对齐方式
+	/** 标签-对齐方式 */
 	labelAlign: { type: String, default: null },
-	// 标签-分隔符
+	/** 标签-分隔符 */
 	labelSplit: { type: String, default: '：' },
-	// 标签-是否禁用快速配置
+	/** 标签-是否禁用快速配置 */
 	labelTextOnly: { type: Boolean, default: false },
 };
 

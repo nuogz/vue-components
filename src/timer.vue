@@ -110,7 +110,7 @@
 	import { props as propsCommon, setup as setupCommon } from './lib/label.js';
 
 
-	import Click from './Click.vue';
+	import Click from './click.vue';
 
 
 

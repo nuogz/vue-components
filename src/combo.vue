@@ -71,7 +71,7 @@
 
 	import { props as propsCommon, setup as setupCommon } from './lib/label.js';
 
-	import Texter from './Texter.vue';
+	import Texter from './texter.vue';
 
 
 
