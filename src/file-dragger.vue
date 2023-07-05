@@ -1,14 +1,14 @@
 <template>
 	<comp-texter>
 		<!-- 禁用 -->
-		<p-disabling v-if="disabling_" class="inblock" :checked="brop(!disable_)" @click="disable_ = !disable_" />
+		<p-disabling v-if="$disabling" class="inblock" :checked="brop(!$disable)" @click="$disable = !$disable" />
 
 		<!-- 标签 -->
-		<p-label v-if="label_" class="inblock elli" :style="styleLabel" @click="disabling_ && (disable_ = !disable_)">{{ label_ }}</p-label>
+		<p-label v-if="$label" class="inblock elli" :style="styleLabel" @click="$disabling && ($disable = !$disable)">{{ $label }}</p-label>
 
 		<!-- 输入框 -->
 		<p-value class="inblock">
-			<p-drag ref="domDrag" @click="selectFile">{{ dragging ? '松开即可选入 <图片>' : '可拖入 <图片> 到此' }}</p-drag>
+			<p-drag ref="domDrag" @click="selectFile">{{ dragging ? draggingLabel : dragLabel }}</p-drag>
 		</p-value>
 	</comp-texter>
 </template>
@@ -23,65 +23,72 @@
 
 
 	const props = defineProps({
-		// update主值
-		modelValue: { type: [Array], default: () => [] },
-		// update是否禁用
+		/** 主值 */
+		modelValue: { type: [Boolean, Array], default: () => [] },
+		/** （开关）是否禁用主值 */
 		disable: { type: Boolean, default: false },
-		// update综合主值
+		/** 主值-文本值 */
 		text: { type: String, default: '' },
-		// disabling启用下的默认值
+		/** 启用禁用框下的默认值 */
 		default: { type: [String, Number, Boolean], default: '' },
 
-		// eslint-disable-next-line vue/valid-define-props
+		/** （开关）启用禁用框 */
+		disabling: { type: [Boolean, String], default: false },
+		/** （开关）只读 */
+		readonly: { type: [Boolean, String], default: false },
+
+
 		...propsCommon,
 
 
-		// boolean是否显示禁用框
-		disabling: { type: [String, Boolean], default: false },
-		// boolean是否制度
-		readonly: { type: [String, Boolean], default: false },
+		/** 文件类型 */
+		accept: { type: String, default: '' },
 
+		/** （开关）多选 */
+		multiSelect: { type: [Boolean, String], default: true },
 
-		// 多选
-		multiSelect: { type: [String, Boolean], default: true },
+		/** 未拖入时显示的文本 */
+		dragLabel: { type: String, default: '拖入 <文件> 到此' },
+		/** 拖入时显示的文本 */
+		draggingLabel: { type: String, default: '松开即可选入 <文件>' },
 	});
 	const emit = defineEmits(['update:modelValue', 'update:disable', 'update:value']);
 
 
-	const disabling_ = computed(() => bropBoolean(props.disabling));
-	const readonly_ = computed(() => bropBoolean(props.readonly));
-	const multiSelect_ = computed(() => bropBoolean(props.multiSelect));
+	const $disabling = computed(() => bropBoolean(props.disabling));
+	const $readonly = computed(() => bropBoolean(props.readonly));
+	const $multiSelect = computed(() => bropBoolean(props.multiSelect));
 
-	const { label_, labelWidth_, labelAlign_ } = setupCommon(props, disabling_);
+	const { $label, $labelWidth, $labelAlign } = setupCommon(props, $disabling);
 
 
-	const styleLabel = computed(() => ({ width: labelWidth_.value, textAlign: labelAlign_.value }));
+	const styleLabel = computed(() => ({ width: $labelWidth.value, textAlign: $labelAlign.value }));
 
-	const value_ = ref(disabling_.value ? (props.modelValue === false ? props.default : props.modelValue) : props.modelValue);
-	const disable_ = ref(disabling_.value ? (props.modelValue === false ? true : false) : props.disable);
+	const $value = ref($disabling.value ? (props.modelValue === false ? props.default : props.modelValue) : props.modelValue);
+	const $disable = ref($disabling.value ? (props.modelValue === false ? true : false) : props.disable);
 
 
 	watch(() => props.disable, disable => {
-		if(!disabling_.value) {
-			disable_.value = disable;
+		if(!$disabling.value) {
+			$disable.value = disable;
 		}
 	});
 	watch(() => props.modelValue, modelValue => {
-		if(disabling_.value) {
+		if($disabling.value) {
 			if(modelValue === false) {
-				disable_.value = true;
+				$disable.value = true;
 			}
 			else {
-				disable_.value = false;
-				value_.value = modelValue;
+				$disable.value = false;
+				$value.value = modelValue;
 			}
 		}
 		else {
-			value_.value = modelValue;
+			$value.value = modelValue;
 		}
 	});
-	watch([value_, disable_], ([value, disable], [valuePrev, disablePrev]) => {
-		if(disabling_.value) {
+	watch([$value, $disable], ([value, disable], [valuePrev, disablePrev]) => {
+		if($disabling.value) {
 			if(value != valuePrev) {
 				emit('update:value', value);
 			}
@@ -95,8 +102,6 @@
 			emit('update:modelValue', value);
 		}
 	});
-
-
 
 
 
@@ -114,28 +119,28 @@
 
 
 		dragger.addEventListener('dragenter', () => {
-			if(readonly_.value) { return; }
+			if($readonly.value) { return; }
 
 
 			dragger.setAttribute('dragging', '');
 			dragging.value = true;
 		});
 		dragger.addEventListener('dragleave', () => {
-			if(readonly_.value) { return; }
+			if($readonly.value) { return; }
 
 
 			dragger.removeAttribute('dragging');
 			dragging.value = false;
 		});
 		dragger.addEventListener('dragover', event => {
-			if(readonly_.value) { return; }
+			if($readonly.value) { return; }
 
 
 			event.preventDefault();
 		});
 
 		dragger.addEventListener('drop', async event => {
-			if(readonly_.value) { return; }
+			if($readonly.value) { return; }
 
 
 			event.preventDefault();
@@ -144,20 +149,32 @@
 			dragger.removeAttribute('dragging');
 			dragging.value = false;
 
-			value_.value = [...(event.dataTransfer?.files ?? [])];
+			$value.value = [...(event.dataTransfer?.files ?? [])];
+		});
+
+
+		dragger.addEventListener('paste', async event => {
+			if($readonly.value) { return; }
+
+
+			event.preventDefault();
+			event.stopPropagation();
+
+			$value.value = [...(event.clipboardData?.files ?? [])];
 		});
 	});
 
 
 	const selectFile = () => {
-		if(readonly_.value) { return; }
+		if($readonly.value) { return; }
 
 
 		const input = document.createElement('input');
 		input.type = 'file';
-		input.multiple = multiSelect_.value;
+		input.multiple = $multiSelect.value;
+		input.accept = props.accept;
 
-		input.addEventListener('input', () => value_.value = [...(input.files ?? [])]);
+		input.addEventListener('input', () => $value.value = [...(input.files ?? [])]);
 
 		input.click();
 	};
@@ -188,29 +205,17 @@ p-label
 
 p-value
 	@apply block relative w-auto h-full overflow-hidden border-solid
-	border-color: var(--colorMain)
 	z-index: 1
 
-	> input
-		@apply relative w-full h-full overflow-hidden
-		outline: none
-		background: transparent
-		font-size: inherit
-
-		&:disabled
-			color: var(--colorDisable)
-
-		&::-webkit-inner-spin-button, &::-webkit-outer-spin-button
-			@apply appearance-none
-
 p-drag
-		@apply block h-24 m-2 leading-[calc(theme("spacing.1")*24)] text-xl text-center cursor-pointer
-		@apply border-2 border-dashed border-gray-400 text-gray-400
+	@apply block h-full leading-[calc(theme("spacing.1")*24)] text-xl text-gray-400 text-center cursor-pointer
+	@apply border-2 border-dashed border-[var(--colorMain)]
 
-		&:hover
-			color: var(--colorMain)
-			border-color: var(--colorMain)
+	&:hover
+		color: var(--colorMain)
+		border-color: var(--colorMain)
 
-		&[dragging]
-			@apply border-solid border-sky-400 text-sky-400
+	&[dragging]
+		@apply border-solid border-[var(--colorOkay)] text-[var(--colorOkay)]
+
 </style>

@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## v1.10.0 - 2023.07.05 11
+* (new) renew all declaration files to be properly compatible with the intellisense for latest `Volar`
+* (break) rename the `ImageDragger` component to `FileDragger`
+* (new) new `FileDragger` prop `accept`, `dragLabel` and `draggingLabel`
+* (new) `FileDragger` support `paste` event
+* (break) some `Combo` props renamed
+	* rename the `list` prop to `options`
+	* rename the `dropAlign` prop to `alignOption`
+* improve `Pager`
+* improve components code style
+
+
 ## v1.9.0 - 2023.05.31 10
 * (new) add `ImageDragger`
 * update components

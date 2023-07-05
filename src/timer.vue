@@ -1,13 +1,13 @@
 <template>
 	<comp-combo>
 		<!-- 禁用 -->
-		<p-disabling v-if="disabling_" class="inblock" :checked="brop(!disable_)" @click="disable_ = !disable_" />
+		<p-disabling v-if="$disabling" class="inblock" :checked="brop(!$disable)" @click="$disable = !$disable" />
 
 		<!-- 标签 -->
-		<p-label v-if="label_" class="inblock elli" :style="styleLabel" @click="disabling_ && (disable_ = !disable_)">{{ label_ }}</p-label>
+		<p-label v-if="$label" class="inblock elli" :style="styleLabel" @click="$disabling && ($disable = !$disable)">{{ $label }}</p-label>
 
 		<!-- 输入框 -->
-		<p-value ref="domValue" class="inblock" @click="!disable_ && !$readonly && atClickDrop()">
+		<p-value ref="domValue" class="inblock" @click="!$disable && !$readonly && atClickDrop()">
 			<input
 				ref="domValue"
 				:value="textShow"
@@ -15,7 +15,7 @@
 				:placeholder="place"
 				:tabindex="tab"
 				:readonly="true"
-				:disabled="disable_"
+				:disabled="$disable"
 			/>
 		</p-value>
 
@@ -136,72 +136,77 @@
 
 
 	const props = defineProps({
-		// update主值
-		modelValue: { type: [String, Number, Boolean], default: '' },
-		// update是否禁用
+		/** 主值 */
+		modelValue: { type: [Boolean, String], default: '' },
+		/** （开关）是否禁用主值 */
 		disable: { type: Boolean, default: false },
-		// update综合主值
+		/** 主值-文本值 */
 		text: { type: String, default: '' },
-		// disabling启用下的默认值
+		/** 启用禁用框下的默认值 */
 		default: { type: [String, Number, Boolean], default: '' },
 
+		/** （开关）启用禁用框 */
+		disabling: { type: [Boolean, String], default: false },
+		/** （开关）只读 */
+		readonly: { type: [Boolean, String], default: false },
 
-		// eslint-disable-next-line vue/valid-define-props
+
 		...propsCommon,
 
 
-		// boolean是否显示禁用框
-		disabling: { type: [String, Boolean], default: false },
-		// boolean是否制度
-		readonly: { type: [String, Boolean], default: false },
-
-
-		// 留空提示
+		/** 留空提示 */
 		place: { type: [Number, String], default: '' },
-		// 焦点顺序
+		/** 焦点顺序 */
 		tab: { type: [Number, String], default: 0 },
-		// 文本对齐方式
+
+		/** 文本-对齐方式 */
 		align: { type: String, default: null },
 
-		// 可选起始时间(时间输入控件特有)
+		/** 起始时间 */
 		begin: { type: [Number, String], default: '' },
-		// 可选结束时间(时间输入控件特有)
+		/** 结束时间 */
 		end: { type: [Number, String], default: '' },
-		// 显示格式
+
+		/** 显示格式器 */
 		showFormatter: { type: [Function, String], default: null },
-		// 输出格式
+		/** 输出格式器 */
 		valueFormatter: { type: [String], default: null },
-		// 结束时间模式 true, 结束模式, 即24:60:60; false, 23:59:59; show, 显示24:60:60, 传23:59:59
+		/**
+		 * 结束时间模式
+		 * - `true`，显示：`24:60:60`，传值：`24:60:60`
+		 * - `false`，显示：`23:59:59`，传值：`23:59:59`
+		 * - `'show'`，显示：`24:60:60`，传值：`23:59:59`
+		 */
 		endTimeMode: { type: [Boolean, String], default: false }
 	});
-
-
-	const disabling_ = computed(() => bropBoolean(props.disabling));
-	const value_ = ref(disabling_.value ? (props.modelValue === false ? props.default : props.modelValue) : props.modelValue);
-	const disable_ = ref(disabling_.value ? (props.modelValue === false ? true : false) : props.disable);
-
 	const emit = defineEmits(['update:modelValue', 'update:disable', 'update:value']);
+
+
+	const $disabling = computed(() => bropBoolean(props.disabling));
+	const $value = ref($disabling.value ? (props.modelValue === false ? props.default : props.modelValue) : props.modelValue);
+	const $disable = ref($disabling.value ? (props.modelValue === false ? true : false) : props.disable);
+
 	watch(() => props.disable, disable => {
-		if(!disabling_.value) {
-			disable_.value = disable;
+		if(!$disabling.value) {
+			$disable.value = disable;
 		}
 	});
 	watch(() => props.modelValue, modelValue => {
-		if(disabling_.value) {
+		if($disabling.value) {
 			if(modelValue === false) {
-				disable_.value = true;
+				$disable.value = true;
 			}
 			else {
-				disable_.value = false;
-				value_.value = modelValue;
+				$disable.value = false;
+				$value.value = modelValue;
 			}
 		}
 		else {
-			value_.value = modelValue;
+			$value.value = modelValue;
 		}
 	});
-	watch([value_, disable_], ([value, disable], [valuePrev, disablePrev]) => {
-		if(disabling_.value) {
+	watch([$value, $disable], ([value, disable], [valuePrev, disablePrev]) => {
+		if($disabling.value) {
 			if(value != valuePrev) {
 				emit('update:value', value);
 			}
@@ -217,8 +222,8 @@
 	});
 
 	// 处理标签
-	const { label_, labelWidth_, labelAlign_ } = setupCommon(props, disabling_);
-	const styleLabel = computed(() => ({ width: labelWidth_.value, textAlign: labelAlign_.value }));
+	const { $label, $labelWidth, $labelAlign } = setupCommon(props, $disabling);
+	const styleLabel = computed(() => ({ width: $labelWidth.value, textAlign: $labelAlign.value }));
 
 	// 响应参数
 	const $readonly = computed(() => bropBoolean(props.readonly));
@@ -238,7 +243,7 @@
 	// `YMDHms`对应`年月日时分秒`
 	// `时间区间`由最大的时间单位和最小的时间单位组成, 无关顺序, `MHm`等价于`HmM`
 	// 可以为`分`和`秒`设置时间间隔, `m15Y`表示区间年到分, `分`间隔为15, 即显示0/15/30/45
-	const timeRange_ = computed(() => {
+	const $timeRange = computed(() => {
 		let result = {
 			start: 5,
 			end: 0
@@ -261,30 +266,30 @@
 	});
 	// 是否显示下拉选择
 	const ranger = (num, ranger) => num >= ranger.start && num <= ranger.end;
-	const isShowOptionsYear = computed(() => ranger(0, timeRange_.value));
-	const isShowOptionsMonth = computed(() => ranger(1, timeRange_.value));
-	const isShowOptionsDate = computed(() => ranger(2, timeRange_.value));
-	const isShowOptionsHour = computed(() => ranger(3, timeRange_.value));
-	const isShowOptionsMinute = computed(() => ranger(4, timeRange_.value));
-	const isShowOptionsSecond = computed(() => ranger(5, timeRange_.value));
+	const isShowOptionsYear = computed(() => ranger(0, $timeRange.value));
+	const isShowOptionsMonth = computed(() => ranger(1, $timeRange.value));
+	const isShowOptionsDate = computed(() => ranger(2, $timeRange.value));
+	const isShowOptionsHour = computed(() => ranger(3, $timeRange.value));
+	const isShowOptionsMinute = computed(() => ranger(4, $timeRange.value));
+	const isShowOptionsSecond = computed(() => ranger(5, $timeRange.value));
 	/** 对应模式下的日期格式 */
-	const format = computed(() => $valueFormatter.value || formatsType[`${timeRange_.value.start}${timeRange_.value.end}`]);
+	const format = computed(() => $valueFormatter.value || formatsType[`${$timeRange.value.start}${$timeRange.value.end}`]);
 	/** 对应模式下的展示格式 */
-	const sormat = computed(() => formatsShow[`${timeRange_.value.start}${timeRange_.value.end}`]);
+	const sormat = computed(() => formatsShow[`${$timeRange.value.start}${$timeRange.value.end}`]);
 
 	// 最早的可选时间
-	const timeBegin_ = computed(() => {
+	const $timeBegin = computed(() => {
 		const time = Day($begin.value, format.value);
 		return time.isValid() ? time : null;
 	});
 	// 最晚的可选时间
-	const timeEnd_ = computed(() => {
+	const $timeEnd = computed(() => {
 		const time = Day($end.value, format.value);
 		return time.isValid() ? time : null;
 	});
 
 	/** 当前时间的Moment封装 */
-	const momentValue = computed(() => Day(value_.value));
+	const momentValue = computed(() => Day($value.value));
 	const momentValueSafe = computed(() => momentValue.value.isValid() ? momentValue.value : Day().startOf('day'));
 	/** 当前时间的显示值 */
 	const textShow = computed(() => {
@@ -300,7 +305,7 @@
 			}
 		}
 		else {
-			return value_.value;
+			return $value.value;
 		}
 	});
 
@@ -336,8 +341,8 @@
 	const optionsDay = ref(['日', '一', '二', '三', '四', '五', '六']);
 	const optionsDate = computed(() => {
 		const value = momentValueSafe.value;
-		const begin = timeBegin_.value;
-		const end = timeEnd_.value;
+		const begin = $timeBegin.value;
+		const end = $timeEnd.value;
 
 		const headDay = value.clone().startOf('month');
 		const tailDay = value.clone().endOf('month');
@@ -422,7 +427,7 @@
 	const optionsMinute = computed(() => {
 		const options = [];
 
-		const interval = timeRange_.value ? timeRange_.value[4] || 1 : 1;
+		const interval = $timeRange.value ? $timeRange.value[4] || 1 : 1;
 		let minute = 0;
 		while(minute <= 59) {
 			options.push({
@@ -438,7 +443,7 @@
 	const optionsSecond = computed(() => {
 		const options = [];
 
-		const interval = timeRange_.value ? timeRange_.value[5] || 1 : 1;
+		const interval = $timeRange.value ? $timeRange.value[5] || 1 : 1;
 		let second = 0;
 		while(second <= 59) {
 			options.push({
@@ -492,7 +497,7 @@
 		}
 
 
-		value_.value = momentNew.format(format.value);
+		$value.value = momentNew.format(format.value);
 
 
 		atShowDrop();

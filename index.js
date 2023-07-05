@@ -9,4 +9,5 @@ export { default as Timer } from './src/timer.vue';
 export { default as FileDragger } from './src/file-dragger.vue';
 
 export { default as Grid } from './src/grid.vue';
+
 export { default as Pager } from './src/pager.vue';

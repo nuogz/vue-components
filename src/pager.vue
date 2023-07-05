@@ -1,19 +1,23 @@
 <template>
 	<comp-pager>
 		<!-- 左翻 -->
-		<p-button :class="{ invalid: pageNow == 1 }" left @click.exact="atOffset(-1)">
+		<p-button :class="{ invalid: pageNow == 1 }" left @click.exact="offsetPage(-1)">
 			<Icon :icon="faAngleLeft" />
 		</p-button>
+
 		<!-- 当前页数 -->
-		<input v-model="pageNow" page-now type="text" @keyup.enter="atOffset(0)" />
+		<input v-model="pageNow" page-now type="text" @keyup.enter="offsetPage(0)" />
 		<div spliter>/</div>
 		<!-- 最大页数 -->
 		<div page-max>{{ pageMax }}</div>
+
 		<!-- 右翻 -->
-		<p-button :class="{ invalid: pageNow >= pageMax }" right @click="atOffset(1)">
+		<p-button :class="{ invalid: pageNow >= pageMax }" right @click="offsetPage(1)">
 			<Icon :icon="faAngleRight" />
 		</p-button>
-		<div v-if="!hider_().total" total>共 {{ total }} 条</div>
+
+		<!-- 总页数 -->
+		<div v-if="!$hider.total" total>共 {{ total }} 条</div>
 	</comp-pager>
 </template>
 
@@ -25,38 +29,37 @@
 
 
 
-
 	const props = defineProps({
-		// update主值-当前页
+		/** 主值 */
 		modelValue: { type: Number, default: 0 },
-		// 单页限制
+
+		/** 单页数据上限 */
 		limit: { type: Number, default: 20 },
-		// 总数
+		/** 总页数 */
 		total: { type: Number, default: 0 },
-		// 隐藏选项
+
+		/** 隐藏选项 */
 		hider: { type: String, default: '' }
 	});
+	const emit = defineEmits(['update:modelValue', 'update:value']);
+
 
 	const pageMax = computed(() => Math.ceil(props.total / props.limit) || 0);
 	const pageNow = ref(props.modelValue);
 
 
-	// 隐藏器
-	const hider_ = () => {
-		let result = {
-			total: false
-		};
+	const $hider = computed(() => {
+		const result = { total: false };
 
 		if(props.hider) {
-			for(let hider of props.hider.split('|')) {
+			for(const hider of props.hider.split('|')) {
 				result[hider] = true;
 			}
 		}
 
 		return result;
-	};
+	});
 
-	const emit = defineEmits(['update:modelValue', 'update:value']);
 
 	watch(() => props.modelValue, modelValue => {
 		pageNow.value = modelValue;
@@ -68,14 +71,15 @@
 		}
 	});
 
-	const atOffset = (offset => {
-		const newPage = ~~pageNow.value + ~~offset;
+	const offsetPage = offset => {
+		const pageNew = ~~pageNow.value + ~~offset;
 
-		if(newPage >= 1 && newPage <= pageMax.value) {
-			pageNow.value = newPage;
-			emit('update:modelValue', newPage);
+		if(pageNew >= 1 && pageNew <= pageMax.value) {
+			pageNow.value = pageNew;
+
+			emit('update:modelValue', pageNew);
 		}
-	});
+	};
 </script>
 
 <style lang="sass" scoped>

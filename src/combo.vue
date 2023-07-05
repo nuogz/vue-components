@@ -1,13 +1,13 @@
 <template>
 	<comp-combo>
 		<!-- 禁用 -->
-		<p-disabling v-if="disabling_" :checked="brop(!disable_)" @click="disable_ = !disable_" />
+		<p-disabling v-if="$disabling" :checked="brop(!$disable)" @click="$disable = !$disable" />
 
 		<!-- 标签 -->
-		<p-label v-if="label_" :style="styleLabel" @click="disabling_ && (disable_ = !disable_)">{{ label_ }}</p-label>
+		<p-label v-if="$label" :style="styleLabel" @click="$disabling && ($disable = !$disable)">{{ $label }}</p-label>
 
 		<!-- 输入框 -->
-		<p-value ref="domValue" :hide-outline="brop(isShowDrop)" :only="brop(!disabling_ && !label_)" @click="atClickDrop($event)">
+		<p-value ref="domValue" :hide-outline="brop(isShowDrop)" :only="brop(!$disabling && !$label)" @click="atClickDrop($event)">
 			<input
 				ref="domInput"
 				:value="textShow"
@@ -15,7 +15,7 @@
 				:placeholder="place"
 				:tabindex="tab"
 				:readonly="true"
-				:disabled="disable_"
+				:disabled="$disable"
 				@keypress.space.stop.prevent="atClickDrop"
 			/>
 			<Icon :icon="isShowDrop ? faAngleUp : faAngleDown" swap-opacity class="w-4 trans" />
@@ -28,16 +28,16 @@
 			@keydown.down.stop.prevent="focusNext"
 			@keydown.esc.stop.prevent="exit"
 		>
-			<p-filter v-show="filter_">
+			<p-filter v-show="filterNow">
 				<p-tip>搜索</p-tip>
-				<Texter v-model="textFilter" filter :focus-switch="switchFocus" />
+				<Texter v-model="textSearchFilter" filter :focus-switch="switchFocus" />
 			</p-filter>
 			<p-options v-if="optionsSelected.length" selected>
-				<p-tip>{{ filter_ ? optionsSelected.length : '' }} 已选</p-tip>
+				<p-tip>{{ filterNow ? optionsSelected.length : '' }} 已选</p-tip>
 				<p-option v-for="(option, oid) of optionsSelected" :key="`combo-option-${oid}`"
 					:selected="brop(option.selected)"
-					:title="option.data?.[props.keyValue] ?? renderShow(option.data)"
-					:style="{ textAlign: dropAlign || align }"
+					:title="option.data?.[keyValue] ?? renderShow(option.data)"
+					:style="{ textAlign: alignOptions || align }"
 					@click="atClickSelect(option)"
 				>
 					{{ renderShow(option.data) }}
@@ -45,11 +45,11 @@
 			</p-options>
 			<p-options>
 				<p-tip :first="brop(indexFocus == 0)">未选</p-tip>
-				<p-option v-if="!options.length" :style="{ textAlign: dropAlign || align }" disabled>无可用选项</p-option>
+				<p-option v-if="!optionsNow.length" :style="{ textAlign: alignOptions || align }" disabled>无可用选项</p-option>
 				<p-option v-for="(option, oid) of optionsUnselected" :key="`combo-option-${oid}`"
 					:selected="brop(option.selected)"
-					:title="option.data?.[props.keyValue] ?? renderShow(option.data)"
-					:style="{ textAlign: dropAlign || align }"
+					:title="option.data?.[keyValue] ?? renderShow(option.data)"
+					:style="{ textAlign: alignOptions || align }"
 					:focus-now="brop(indexFocus == oid)"
 					@click="atClickSelect(option)"
 				>
@@ -76,88 +76,91 @@
 
 
 	const props = defineProps({
-		// update主值
-		modelValue: { type: [String, Number, Boolean, Array, Object], default: '' },
-		// update是否禁用
+		/** 主值 */
+		modelValue: { type: [Boolean, String, Number, Array], default: '' },
+		/** （开关）是否禁用主值 */
 		disable: { type: Boolean, default: false },
-		// update综合主值
+		/** 主值-文本值 */
 		text: { type: String, default: '' },
-		// disabling启用下的默认值
+		/** 启用禁用框下的默认值 */
 		default: { type: [String, Number, Boolean], default: '' },
+
+		/** （开关）启用禁用框 */
+		disabling: { type: [Boolean, String], default: false },
+		/** （开关）只读 */
+		readonly: { type: [Boolean, String], default: false },
 
 
 		...propsCommon,
 
 
-		// boolean是否显示禁用框
-		disabling: { type: [String, Boolean], default: false },
-		// boolean是否制度
-		readonly: { type: [String, Boolean], default: false },
+		/** 下拉选项 */
+		options: { type: Array, default: () => ([]), required: true },
 
 
-		// 留空提示
+		/** 留空提示 */
 		place: { type: [Number, String], default: '' },
-		// 焦点顺序
+		/** 焦点顺序 */
 		tab: { type: [Number, String], default: 0 },
-		// 文本对齐方式
-		align: { type: String, default: null },
-		// 下拉选项对齐方式
-		dropAlign: { type: String, default: null },
 
-		// 下拉列表
-		list: { type: Array, default: () => ([]) },
-		// 筛选参数
+		/** 文本-对齐方式 */
+		align: { type: String, default: null },
+		/** 下拉选项-对齐方式 */
+		alignOptions: { type: String, default: null },
+
+		/** 筛选选项 */
 		filter: { type: [String, Boolean, Function], default: false },
-		// 多选
-		multiSelect: { type: [String, Boolean], default: false },
-		// 显示键值
+		/** （开关）多选 */
+		multiSelect: { type: [Boolean, String], default: false },
+
+		/** 显示值所在的键值 */
 		keyShow: { type: [String, Function, Array], default: 'text' },
-		// 数据键值
+		/** 数据值所在的键值 */
 		keyValue: { type: String, default: 'value' },
 
-		// 数据分隔符
+		/** 数据分隔符 */
 		separatorValue: { type: String, default: ',' },
-		// 显示分隔符
+		/** 显示分隔符 */
 		separatorShow: { type: String, default: '、' },
 
-		// 下拉开关切换
+		/** （控制）切换下拉显示隐藏 */
 		openSwitch: { type: Boolean, default: false },
 	});
 	const emit = defineEmits(['update:modelValue', 'update:disable', 'update:value']);
 
 
-	const multiSelect_ = computed(() => props.multiSelect === 'array' ? props.multiSelect : bropBoolean(props.multiSelect));
-	const disabling_ = computed(() => bropBoolean(props.disabling));
-	const readonly_ = computed(() => bropBoolean(props.readonly));
+	const $multiSelect = computed(() => props.multiSelect === 'array' ? props.multiSelect : bropBoolean(props.multiSelect));
+	const $disabling = computed(() => bropBoolean(props.disabling));
+	const $readonly = computed(() => bropBoolean(props.readonly));
 
-	const { label_, labelWidth_, labelAlign_ } = setupCommon(props, disabling_);
+	const { $label, $labelWidth, $labelAlign } = setupCommon(props, $disabling);
 
-	const styleLabel = computed(() => ({ width: labelWidth_.value, textAlign: labelAlign_.value }));
+	const styleLabel = computed(() => ({ width: $labelWidth.value, textAlign: $labelAlign.value }));
 
-	const value_ = ref(disabling_.value ? (props.modelValue === false ? props.default : props.modelValue) : props.modelValue);
-	const disable_ = ref(disabling_.value ? (props.modelValue === false ? true : false) : props.disable);
+	const $value = ref($disabling.value ? (props.modelValue === false ? props.default : props.modelValue) : props.modelValue);
+	const $disable = ref($disabling.value ? (props.modelValue === false ? true : false) : props.disable);
 
 	watch(() => props.disable, disable => {
-		if(!disabling_.value) {
-			disable_.value = disable;
+		if(!$disabling.value) {
+			$disable.value = disable;
 		}
 	});
 	watch(() => props.modelValue, modelValue => {
-		if(disabling_.value) {
+		if($disabling.value) {
 			if(modelValue === false) {
-				disable_.value = true;
+				$disable.value = true;
 			}
 			else {
-				disable_.value = false;
-				value_.value = modelValue;
+				$disable.value = false;
+				$value.value = modelValue;
 			}
 		}
 		else {
-			value_.value = modelValue;
+			$value.value = modelValue;
 		}
 	});
-	watch([value_, disable_], ([value, disable], [valuePrev, disablePrev]) => {
-		if(disabling_.value) {
+	watch([$value, $disable], ([value, disable], [valuePrev, disablePrev]) => {
+		if($disabling.value) {
 			if(value != valuePrev) {
 				emit('update:value', value);
 			}
@@ -173,10 +176,10 @@
 	});
 
 
-	const values_ = computed(() => {
-		const valueNow = value_.value;
+	const $values = computed(() => {
+		const valueNow = $value.value;
 
-		if(multiSelect_.value) {
+		if($multiSelect.value) {
 			if(valueNow instanceof Array) {
 				return valueNow.filter(v => v);
 			}
@@ -207,11 +210,11 @@
 
 	// 计算是否被选中
 	const parseSelected = data => {
-		const valuesNow = values_.value;
+		const valuesNow = $values.value;
 		const value = getDataValue(data);
 
 		return {
-			selected: multiSelect_.value
+			selected: $multiSelect.value
 				? !!~valuesNow.findIndex(valueNow => isEqual(valueNow, value))
 				: isEqual(valuesNow[0], value),
 			value
@@ -219,34 +222,35 @@
 	};
 
 
-	// 默认过滤函数
-	const textFilter = ref('');
-	const filter_ = computed(() => typeof props.filter == 'function' ? props.filter : bropBoolean(props.filter));
-	const filter = (option, index, options) => {
-		const serach = textFilter.value?.trim() ?? '';
+	// 过滤函数
+	const textSearchFilter = ref('');
+	const filterNow = computed(() => typeof props.filter == 'function' ? props.filter : bropBoolean(props.filter));
+	const filterOption = (option, index, options) => {
+		const serach = textSearchFilter.value?.trim() ?? '';
 
-		const filterNow = filter_.value;
-		if(!filterNow) { return true; }
+		const filter = filterNow.value;
 
-		if(typeof filterNow == 'function') { return filterNow(serach, option.data, option, index, options); }
+		if(!filter) { return true; }
+		if(typeof filter == 'function') { return filter(serach, option.data, option, index, options); }
 
 		return renderShow(option.data)?.includes(serach);
 	};
 
 
-	// 主列表, 决定本地列表或远程列表
-	const listRaw = computed(() => props.list);
+	// 原生选项, 决定本地列表或远程列表
+	const optionsRaw = computed(() => props.options);
 
-	// 主列表封装
-	const options = computed(() => listRaw.value.map(data => ({ data, ...parseSelected(data) })));
-	const optionsSelected = computed(() => options.value.filter(option => option.selected));
+	// 选项封装和分类
+	const optionsNow = computed(() => optionsRaw.value.map(data => ({ data, ...parseSelected(data) })));
+	const optionsSelected = computed(() => optionsNow.value.filter(option => option.selected));
 	const optionsUnselected = computed(() =>
-		options.value.filter(option => !option.selected)
-			.filter((option, index, options) => filter(option, index, options))
+		optionsNow.value.filter(option => !option.selected)
+			.filter((option, index, options) => filterOption(option, index, options))
 			.filter(option => !option.data?.hidden)
 	);
 
 
+	// 渲染选项和主值的显示
 	const renderShow = (data, type = 0) => {
 		const keyShow = props.keyShow instanceof Array
 			? props.keyShow[type]
@@ -259,8 +263,8 @@
 		return data?.[keyShow] ?? '';
 	};
 	const textShow = computed(() =>
-		values_.value
-			.map(v => renderShow(listRaw.value.find(data => isEqual(getDataValue(data), v)), 1))
+		$values.value
+			.map(v => renderShow(optionsRaw.value.find(data => isEqual(getDataValue(data), v)), 1))
 			.join(props.separatorShow)
 	);
 
@@ -277,7 +281,7 @@
 	const atShowDrop = () => {
 		isShowDrop.value = true;
 
-		nextTick(() => filter_.value ? switchFocus.value = !switchFocus.value : domDrop.value.focus());
+		nextTick(() => filterNow.value ? switchFocus.value = !switchFocus.value : domDrop.value.focus());
 	};
 	const atHideDrop = () => {
 		isShowDrop.value = false;
@@ -289,7 +293,7 @@
 	const switchFocus = ref(false);
 
 	const atClickDrop = () => {
-		if(disable_.value || readonly_.value) { return; }
+		if($disable.value || $readonly.value) { return; }
 
 		const tippy = tippyDrop.value;
 
@@ -307,17 +311,17 @@
 
 	const select = option => {
 		option.selected = true;
-		value_.value = option.value;
+		$value.value = option.value;
 
 		tippyDrop.value.hide();
 	};
 	const atClickSelect = option => {
-		if(multiSelect_.value) {
+		if($multiSelect.value) {
 			option.selected = !!option.selected;
 
 			const valueNow = option.value;
 
-			const setValues = new Set(values_.value);
+			const setValues = new Set($values.value);
 			if(setValues.has(valueNow)) {
 				setValues.delete(valueNow);
 			}
@@ -326,11 +330,11 @@
 			}
 
 			const values = [...setValues];
-			if(multiSelect_.value == 'array') {
-				value_.value = values;
+			if($multiSelect.value == 'array') {
+				$value.value = values;
 			}
 			else {
-				value_.value = values.join(props.separatorValue);
+				$value.value = values.join(props.separatorValue);
 			}
 		}
 		else {
@@ -370,8 +374,8 @@
 	};
 
 	const exit = () => {
-		if(filter_.value && textFilter.value) {
-			return textFilter.value = '';
+		if(filterNow.value && textSearchFilter.value) {
+			return textSearchFilter.value = '';
 		}
 
 		return tippyDrop.value.hide();

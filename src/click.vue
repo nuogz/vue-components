@@ -10,12 +10,17 @@
 	import { FontAwesomeIcon as Icon } from '@fortawesome/vue-fontawesome';
 
 
-
 	defineProps({
+		/** 按钮-文本 */
 		text: { type: String, default: '' },
+
+		/** （开关）样式-反转 */
 		white: { type: [Boolean, String], default: false },
+
+		/** 图标 */
 		icon: { type: [String, Array, Object], default: null },
-		spin: { type: [Boolean], default: false },
+		/** （开关）图标-旋转 */
+		spin: { type: Boolean, default: false },
 	});
 </script>
 

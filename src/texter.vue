@@ -1,25 +1,25 @@
 <template>
 	<comp-texter>
 		<!-- 禁用 -->
-		<p-disabling v-if="disabling_" class="inblock" :checked="brop(!disable_)" @click="disable_ = ! disable_" />
+		<p-disabling v-if="$disabling" class="inblock" :checked="brop(!$disable)" @click="$disable = ! $disable" />
 
 		<!-- 标签 -->
-		<p-label v-if="label_" class="inblock elli" :style="styleLabel" @click="disabling_ && (disable_ = ! disable_)">{{ label_ }}</p-label>
+		<p-label v-if="$label" class="inblock elli" :style="styleLabel" @click="$disabling && ($disable = ! $disable)">{{ $label }}</p-label>
 
 		<!-- 输入框 -->
 		<p-value class="inblock">
 			<input
 				ref="domInput"
-				v-model="value_"
+				v-model="$value"
 				:style="{ textAlign: align }"
 				:placeholder="place"
 				:tabindex="tab"
-				:type="type_"
-				:readonly="readonly_"
-				:disabled="disable_"
+				:type="$type"
+				:readonly="$readonly"
+				:disabled="$disable"
 				:min="min"
 				:max="max"
-				@mousewheel="type_ == 'number' && atMouseWheel"
+				@mousewheel="$type == 'number' && atMouseWheel"
 			/>
 		</p-value>
 	</comp-texter>
@@ -35,78 +35,81 @@
 
 
 	const props = defineProps({
-		// update主值
-		modelValue: { type: [String, Number, Boolean], default: '' },
-		// update是否禁用
+		/** 主值 */
+		modelValue: { type: [Boolean, String, Number], default: '' },
+		/** （开关）是否禁用主值 */
 		disable: { type: Boolean, default: false },
-		// update综合主值
+		/** 主值-文本值 */
 		text: { type: String, default: '' },
-		// disabling启用下的默认值
+		/** 启用禁用框下的默认值 */
 		default: { type: [String, Number, Boolean], default: '' },
 
-		// eslint-disable-next-line vue/valid-define-props
+		/** （开关）启用禁用框 */
+		disabling: { type: [Boolean, String], default: false },
+		/** （开关）只读 */
+		readonly: { type: [Boolean, String], default: false },
+
+
 		...propsCommon,
 
 
-		// boolean是否显示禁用框
-		disabling: { type: [String, Boolean], default: false },
-		// boolean是否制度
-		readonly: { type: [String, Boolean], default: false },
-
-
-		// 留空提示
+		/** 留空提示 */
 		place: { type: [Number, String], default: '' },
-		// 焦点顺序
+		/** 焦点顺序 */
 		tab: { type: [Number, String], default: 0 },
-		// 文本对齐方式
+
+		/** 文本-对齐方式 */
 		align: { type: String, default: null },
-		// 输入框类型
+
+		/** 输入框类型 */
 		type: { type: String, default: null },
-		// 数字最小
+
+		/** 最小数字 */
 		min: { type: [Number, String], default: null },
-		// 数字最大
+		/** 最大数字 */
 		max: { type: [Number, String], default: null },
 
+		/** （控制）切换文本框焦点 */
 		focusSwitch: { type: Boolean, default: false },
 	});
 	const emit = defineEmits(['update:modelValue', 'update:disable', 'update:value']);
 
 
-	const disabling_ = computed(() => bropBoolean(props.disabling));
-	const readonly_ = computed(() => bropBoolean(props.readonly));
+	const $disabling = computed(() => bropBoolean(props.disabling));
+	const $readonly = computed(() => bropBoolean(props.readonly));
 
-	const { label_, labelWidth_, labelAlign_ } = setupCommon(props, disabling_);
+	const { $label, $labelWidth, $labelAlign } = setupCommon(props, $disabling);
 
 	const typeDict = { text: 'text', pass: 'password', number: 'number' };
-	const type_ = computed(() => typeDict[props.type] || typeDict.text);
+	const $type = computed(() => typeDict[props.type] || typeDict.text);
 
-	const styleLabel = computed(() => ({ width: labelWidth_.value, textAlign: labelAlign_.value }));
+	const styleLabel = computed(() => ({ width: $labelWidth.value, textAlign: $labelAlign.value }));
 
-	const value_ = ref(disabling_.value ? (props.modelValue === false ? props.default : props.modelValue) : props.modelValue);
-	const disable_ = ref(disabling_.value ? (props.modelValue === false ? true : false) : props.disable);
+	const $value = ref($disabling.value ? (props.modelValue === false ? props.default : props.modelValue) : props.modelValue);
+	const $disable = ref($disabling.value ? (props.modelValue === false ? true : false) : props.disable);
 
 
 	watch(() => props.disable, disable => {
-		if(!disabling_.value) {
-			disable_.value = disable;
+		if(!$disabling.value) {
+			$disable.value = disable;
 		}
 	});
 	watch(() => props.modelValue, modelValue => {
-		if(disabling_.value) {
+		if($disabling.value) {
 			if(modelValue === false) {
-				disable_.value = true;
+				$disable.value = true;
 			}
 			else {
-				disable_.value = false;
-				value_.value = modelValue;
+				$disable.value = false;
+				$value.value = modelValue;
 			}
 		}
 		else {
-			value_.value = modelValue;
+			$value.value = modelValue;
 		}
 	});
-	watch([value_, disable_], ([value, disable], [valuePrev, disablePrev]) => {
-		if(disabling_.value) {
+	watch([$value, $disable], ([value, disable], [valuePrev, disablePrev]) => {
+		if($disabling.value) {
 			if(value != valuePrev) {
 				emit('update:value', value);
 			}
@@ -118,19 +121,19 @@
 				disable === true ?
 					false :
 					(
-						type_.value == 'number' ?
+						$type.value == 'number' ?
 							~~value :
 							value
 					)
 			);
 		}
 		else {
-			emit('update:modelValue', type_.value == 'number' ? ~~value : value);
+			emit('update:modelValue', $type.value == 'number' ? ~~value : value);
 		}
 	});
 
 
-	const atMouseWheel = event => emit('update:value', value_.value += event.deltaY > 0 ? -1 : 1);
+	const atMouseWheel = event => emit('update:value', $value.value += event.deltaY > 0 ? -1 : 1);
 
 
 	const domInput = ref(null);

@@ -3,7 +3,7 @@
 		<!-- 表头 -->
 		<p-head v-if="isShowHead">
 			<table ref="domHead" head :style="{ left: leftHead }">
-				<tr v-for="row of heads" row>
+				<tr v-for="row of headsNow" row>
 					<th v-for="head of row" cell
 						:_lastInRow="brop(head.isLast)"
 						:rowspan="head.row" :colspan="head.col"
@@ -15,7 +15,7 @@
 						:no-border="brop(!isShowBorder)"
 					>
 						{{ head.text }}
-						<Icon v-if="head.sort" sort-icon :_enable="brop(sorts.find(s => s.index == head.index)?.direct)" :icon="icons_sortDirect[sorts.find(s => s.index == head.index)?.direct] ?? faArrowDownUpAcrossLine" @click="atSort(head)" />
+						<Icon v-if="head.sort" sort-icon :_enable="brop(sorts.find(s => s.index == head.index)?.direct)" :icon="icons$sort[sorts.find(s => s.index == head.index)?.direct] ?? faArrowDownUpAcrossLine" @click="atSort(head)" />
 					</th>
 				</tr>
 			</table>
@@ -108,40 +108,37 @@
 
 
 	const props = defineProps({
-		// 更新主值
-		modelValue: { type: [Object], default: () => ({}) },
+		/** 主值 */
+		modelValue: { type: Object, default: () => ({}) },
 
-		// 表头
-		heads: { type: Array, default: () => [] },
-		// 数据
-		datas: { type: Array, default: () => [] },
+		/** 表头 */
+		heads: { type: Array, default: () => [], required: true },
+		/** 数据集 */
+		datas: { type: Array, default: () => [], required: true },
 
-		// 开关
-		// 显示表头
+		/** （开关）显示表头 */
 		showHead: { type: [Boolean, String], default: true },
-		// 显示数据
+		/** （开关）显示数据 */
 		showBody: { type: [Boolean, String], default: true },
-		// 显示表格两侧的留空
+		/** （开关）显示表格两侧的留空 */
 		showPadding: { type: [Boolean, String], default: true },
-		// 显示表格线
+		/** （开关）显示表格线 */
 		showBorder: { type: [Boolean, String], default: true },
-		// 显示斑马纹
+		/** （开关）显示斑马底色 */
 		showOdd: { type: [Boolean, String], default: true },
-		// 显示当前选择
+		/** （开关）显示当前选择 */
 		showSelect: { type: [Boolean, String], default: false },
 
-		// 行高
-		rowHeight: { type: [Number, String], default: '3rem|2rem' },
-
-
-		// 双击函数
-		onDblclick: { type: Function, default: () => (function() { }) },
-		// 多选
+		/** （开关）启用多选 */
 		multiSelect: { type: [Boolean, String], default: false },
-		// 是否自动高度
+		/** （开关）启用自动高度 */
 		autoHeight: { type: [Boolean, String], default: false },
 
+		/** 行高 */
+		rowHeight: { type: [Number, String], default: '3rem|2rem' },
 
+		/** 双击函数 */
+		onDblclick: { type: Function, default: () => (function() { }) },
 	});
 	const emit = defineEmits(['update:modelValue', 'sort']);
 
@@ -157,7 +154,7 @@
 
 	// 表头
 	const headsRaw = computed(() => props.heads.filter(head => !head.hide));
-	const heads = computed(() => {
+	const headsNow = computed(() => {
 		let stackMax = 1;
 		const headsStack = [[]];
 		const rowLast = [];
@@ -214,7 +211,7 @@
 
 
 
-	const icons_sortDirect = {
+	const icons$sort = {
 		'ASC': faArrowDown19,
 		'DESC': faArrowDown91,
 	};
@@ -285,7 +282,7 @@
 	const domHead = ref(null);
 	watch(isShowBorder, () => setTimeout(() => heightHead.value = domHead.value && getComputedStyle(domHead.value).height), { immediate: true });
 	const heightBody = computed(() =>
-		`calc(100% - ${heightHead.value ?? `(${heightRow.value.head} + 2px) * ${heads.value.length})`}`
+		`calc(100% - ${heightHead.value ?? `(${heightRow.value.head} + 2px) * ${headsNow.value.length})`}`
 	);
 
 
