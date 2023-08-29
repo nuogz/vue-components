@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## v1.11.0 - 2023.08.30 00
+* (new) `Click` support `disable` prop
+* (break) renew color-related CSS variables
+* improve styles of disabled components
+* bump up dependencies
+* tweak style
+* add tailwind configuration for intellisense
+
+
 ## v1.10.0 - 2023.07.05 11
 * (new) renew all declaration files to be properly compatible with the intellisense for latest `Volar`
 * (break) rename the `ImageDragger` component to `FileDragger`

@@ -4,6 +4,8 @@ declare const PR: {
 
 	/** （开关）样式-反转 */
 	white: { type: (BooleanConstructor | StringConstructor)[], default: boolean },
+	/** （开关）样式-禁用 */
+	disable: { type: (BooleanConstructor | StringConstructor)[], default: boolean },
 
 	/** 图标 */
 	icon: { type: (ObjectConstructor | StringConstructor | ArrayConstructor | import("@fortawesome/fontawesome-svg-core").IconDefinition)[], default: null },

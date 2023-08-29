@@ -4,7 +4,7 @@
 		<p-disabling v-if="$disabling" class="inblock" :checked="brop(!$disable)" @click="$disable = !$disable" />
 
 		<!-- 标签 -->
-		<p-label v-if="$label" class="inblock elli" :style="styleLabel" @click="$disabling && ($disable = !$disable)">{{ $label }}</p-label>
+		<p-label v-if="$label" :disabled="brop($disable)" class="inblock elli" :style="styleLabel" @click="$disabling && ($disable = !$disable)">{{ $label }}</p-label>
 
 		<!-- 输入框 -->
 		<p-value class="inblock">
@@ -15,7 +15,7 @@
 				:placeholder="place"
 				:tabindex="tab"
 				:readonly="$readonly"
-				:disabled="$disable"
+				:disabled="brop($disable)"
 			/>
 		</p-value>
 	</comp-texter>
@@ -32,7 +32,7 @@
 
 	const props = defineProps({
 		/** 主值 */
-		modelValue: { type: [Boolean, String, Number], default: '' },
+		modelValue: { type: [String, Number, Boolean], default: '' },
 		/** （开关）是否禁用主值 */
 		disable: { type: Boolean, default: false },
 		/** 主值-文本值 */
@@ -126,41 +126,38 @@
 
 <style lang="sass" scoped>
 p-disabling
-	@apply relative float-left top-2 w-4 h-4 mx-1 border-2 border-solid select-none cursor-pointer appearance-none filter hover:brightness-110
-	border-color: var(--colorMain)
+	@apply inblock relative float-left top-2 w-4 h-4 mx-1 border-solid select-none cursor-pointer appearance-none
+	@apply filter hover:brightness-110
+	@apply border-2 border-[var(--cMain)]
 
 	&[checked]
-		background-color: var(--colorMain)
+		@apply bg-[var(--cMain)]
 
 		&::after
 			content: ""
-			@apply absolute border-2 border-solid border-t-0 border-r-0
-			top: 2px
-			left: 0px
-			width: 0.75rem
-			height: 0.4rem
-			border-color: var(--colorTextMain)
+			@apply absolute border-2 border-solid border-t-0 border-r-0 border-[var(--cTextMain)]
+			@apply top-[2px] left-[0px]
+			@apply w-[0.75rem] h-[0.4rem]
 			transform: rotate(-45deg) scale(0.77, 0.77)
 
 
 p-label
 	@apply block relative float-left w-auto h-full overflow-hidden cursor-pointer select-none
 
+	&[disabled]
+		@apply text-[var(--cTextMainDisabled)] filter brightness-75 select-none cursor-default
 
 p-value
-	@apply block relative w-auto h-full overflow-hidden border-b-2 border-solid
-	border-color: var(--colorMain)
+	@apply block relative w-auto h-full overflow-hidden border-b-2 border-solid border-[var(--cMain)]
 	padding: 0 0.25rem
 	z-index: 1
 
 	> textarea
-		@apply relative w-full h-full
-		outline: none
-		background: transparent
+		@apply relative w-full h-full outline-none bg-transparent
 		font-size: inherit
 
 		&:disabled
-			color: var(--colorDisable)
+			@apply text-[var(--cTextMainDisabled)] filter brightness-75 select-none cursor-default
 
 		&::-webkit-inner-spin-button, &::-webkit-outer-spin-button
 			@apply appearance-none

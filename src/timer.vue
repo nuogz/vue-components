@@ -4,7 +4,7 @@
 		<p-disabling v-if="$disabling" class="inblock" :checked="brop(!$disable)" @click="$disable = !$disable" />
 
 		<!-- 标签 -->
-		<p-label v-if="$label" class="inblock elli" :style="styleLabel" @click="$disabling && ($disable = !$disable)">{{ $label }}</p-label>
+		<p-label v-if="$label" :disabled="brop($disable)" class="inblock elli" :style="styleLabel" @click="$disabling && ($disable = !$disable)">{{ $label }}</p-label>
 
 		<!-- 输入框 -->
 		<p-value ref="domValue" class="inblock" @click="!$disable && !$readonly && atClickDrop()">
@@ -15,7 +15,7 @@
 				:placeholder="place"
 				:tabindex="tab"
 				:readonly="true"
-				:disabled="$disable"
+				:disabled="brop($disable)"
 			/>
 		</p-value>
 
@@ -28,9 +28,9 @@
 				<p-drop-value v-if="isShowOptionsHour"><span>{{ momentValueSafe.format('HH') }}</span>时</p-drop-value>
 				<p-drop-value v-if="isShowOptionsMinute"><span>{{ momentValueSafe.format('mm') }}</span>分</p-drop-value>
 				<p-drop-value v-if="isShowOptionsSecond"><span>{{ momentValueSafe.format('ss') }}</span>秒</p-drop-value>
-				<Click white text="向前一天" @click="atSelect('day-add', -1)" />
-				<Click white text="当前时间" @click="atSelect('now')" />
-				<Click white text="向后一天" @click="atSelect('day-add', 1)" />
+				<Click v-if="isShowOptionsDate" drop-button white text="向前一天" @click="atSelect('day-add', -1)" />
+				<Click drop-button white text="当前时间" @click="atSelect('now')" />
+				<Click v-if="isShowOptionsDate" drop-button white text="向后一天" @click="atSelect('day-add', 1)" />
 			</p-drop-values>
 			<p-drop-options-box>
 				<p-drop-options v-if="isShowOptionsYear">
@@ -137,7 +137,7 @@
 
 	const props = defineProps({
 		/** 主值 */
-		modelValue: { type: [Boolean, String], default: '' },
+		modelValue: { type: [String, Boolean], default: '' },
 		/** （开关）是否禁用主值 */
 		disable: { type: Boolean, default: false },
 		/** 主值-文本值 */
@@ -523,29 +523,29 @@
 
 <style lang="sass" scoped>
 p-disabling
-	@apply relative float-left top-2 w-4 h-4 mx-1 border-2 border-solid select-none cursor-pointer appearance-none filter hover:brightness-110
-	border-color: var(--colorMain)
+	@apply inblock relative float-left top-2 w-4 h-4 mx-1 border-solid select-none cursor-pointer appearance-none
+	@apply filter hover:brightness-110
+	@apply border-2 border-[var(--cMain)]
 
 	&[checked]
-		background-color: var(--colorMain)
+		@apply bg-[var(--cMain)]
 
 		&::after
 			content: ""
-			@apply absolute border-2 border-solid border-t-0 border-r-0
-			top: 2px
-			left: 0px
-			width: 0.75rem
-			height: 0.4rem
-			border-color: var(--colorTextMain)
+			@apply absolute border-2 border-solid border-t-0 border-r-0 border-[var(--cTextMain)]
+			@apply top-[2px] left-[0px]
+			@apply w-[0.75rem] h-[0.4rem]
 			transform: rotate(-45deg) scale(0.77, 0.77)
 
 p-label
 	@apply block relative float-left w-auto h-full overflow-hidden cursor-pointer select-none
 
+	&[disabled]
+		@apply text-[var(--cTextMainDisabled)] filter brightness-75 select-none cursor-default
+
 
 p-value
-	@apply block relative w-auto h-full overflow-hidden border-b-2 border-solid
-	border-color: var(--colorMain)
+	@apply block relative w-auto h-full overflow-hidden border-b-2 border-solid border-[var(--cMain)]
 	padding: 0 0.25rem
 	z-index: 1
 
@@ -558,24 +558,23 @@ p-value
 		font-size: inherit
 
 		&:disabled
-			color: var(--colorDisable)
+			@apply text-[var(--cTextMainDisabled)] filter brightness-75 select-none cursor-default
 
 
 p-drop
-	@apply block bg-white py-2 border-2 rounded-b-sm shadow-2xl overflow-hidden
-	border-color: var(--colorMain)
+	@apply block bg-[var(--cBack)] py-2 rounded-b-sm shadow-2xl overflow-hidden
+	@apply border-2 border-[var(--cMain)]
 	p-drop-values
-		@apply block px-2
+		@apply block px-1 mb-2
 
 		p-drop-value
-			@apply text-xs leading-8
-			color: var(--colorText)
-			span
-				@apply px-1 text-base leading-8
-				color: var(--colorMain)
+			@apply text-xs leading-8 text-[var(--cTextBack)]
 
-		comp-click
-			@apply ml-2
+			span
+				@apply px-1 text-base leading-8 text-[var(--cMain)]
+
+		[drop-button]
+			@apply ml-2 px-2 py-1 h-6 leading-6 text-xs
 
 	p-drop-options-box
 		@apply px-1
@@ -585,7 +584,7 @@ p-drop
 
 
 			&:not(:last-child)
-				@apply border-gray-300
+				@apply border-[var(--cTextBack)]
 			&[date]
 				@apply overflow-y-hidden px-1
 				width: calc(theme("spacing.1") * 42 + theme("spacing.1") * 2 + 1px)
@@ -594,38 +593,38 @@ p-drop
 			p-drop-option
 				@apply block px-2 mx-1 text-sm leading-6 text-center cursor-pointer border border-transparent
 				&:hover
-					border-color: var(--colorMain)
+					@apply border-[var(--cMain)]
 				min-width: 4rem
 
 			p-drop-option-date
 				@apply relative inblock w-6 h-8 leading-8 text-sm text-center cursor-pointer border border-transparent z-10
 
 				&:not([day]):not([out-month]):not([out-range]):hover
-					@apply z-20
-					border-color: var(--colorMain)
+					@apply z-20 border-[var(--cMain)]
 				&[day]
 					@apply text-sm leading-8 select-none cursor-default
 				&[out-month]
-					color: var(--colorDisable)
+					@apply text-[var(--cTextMainDisabled)]
+					&:hover
+						@apply text-[var(--cTextBack)]
 				&[out-range]
-					@apply text-[snow] cursor-default
+					@apply text-[var(--cBack)] cursor-default
 				&[month-t]
-					border-top-color: var(--colorMain)
+					@apply border-t-[var(--cMain)]
 				&[month-b]
-					border-bottom-color: var(--colorMain)
+					@apply border-b-[var(--cMain)]
 				&[month-l]
-					border-left-color: var(--colorMain)
+					@apply border-l-[var(--cMain)]
 				&[month-r]
-					border-right-color: var(--colorMain)
+					@apply border-r-[var(--cMain)]
 				&[month-t][month-l]
-					@apply rounded-tl
+					@apply rounded-tl-sm
 				&[month-t][month-r]
-					@apply rounded-tr
+					@apply rounded-tr-sm
 				&[month-b][month-l]
-					@apply rounded-bl
+					@apply rounded-bl-sm
 				&[month-b][month-r]
-					@apply rounded-br
+					@apply rounded-br-sm
 			[selected]
-				@apply font-bold text-[snow] cursor-default
-				background-color: var(--colorMain)
+				@apply font-bold text-[var(--cTextMain)] bg-[var(--cMain)] cursor-default
 </style>

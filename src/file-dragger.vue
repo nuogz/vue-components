@@ -1,16 +1,16 @@
 <template>
-	<comp-texter>
+	<comp-file-dragger>
 		<!-- 禁用 -->
 		<p-disabling v-if="$disabling" class="inblock" :checked="brop(!$disable)" @click="$disable = !$disable" />
 
 		<!-- 标签 -->
-		<p-label v-if="$label" class="inblock elli" :style="styleLabel" @click="$disabling && ($disable = !$disable)">{{ $label }}</p-label>
+		<p-label v-if="$label" :disabled="brop($disable)" class="inblock elli" :style="styleLabel" @click="$disabling && ($disable = !$disable)">{{ $label }}</p-label>
 
 		<!-- 输入框 -->
 		<p-value class="inblock">
-			<p-drag ref="domDrag" @click="selectFile">{{ dragging ? draggingLabel : dragLabel }}</p-drag>
+			<p-drag ref="domDrag" :disabled="brop($disable)" @click="selectFile">{{ dragging ? draggingLabel : dragLabel }}</p-drag>
 		</p-value>
-	</comp-texter>
+	</comp-file-dragger>
 </template>
 
 <script setup>
@@ -24,7 +24,7 @@
 
 	const props = defineProps({
 		/** 主值 */
-		modelValue: { type: [Boolean, Array], default: () => [] },
+		modelValue: { type: [Array, Boolean], default: () => [] },
 		/** （开关）是否禁用主值 */
 		disable: { type: Boolean, default: false },
 		/** 主值-文本值 */
@@ -119,28 +119,28 @@
 
 
 		dragger.addEventListener('dragenter', () => {
-			if($readonly.value) { return; }
+			if($disable.value || $readonly.value) { return; }
 
 
 			dragger.setAttribute('dragging', '');
 			dragging.value = true;
 		});
 		dragger.addEventListener('dragleave', () => {
-			if($readonly.value) { return; }
+			if($disable.value || $readonly.value) { return; }
 
 
 			dragger.removeAttribute('dragging');
 			dragging.value = false;
 		});
 		dragger.addEventListener('dragover', event => {
-			if($readonly.value) { return; }
+			if($disable.value || $readonly.value) { return; }
 
 
 			event.preventDefault();
 		});
 
 		dragger.addEventListener('drop', async event => {
-			if($readonly.value) { return; }
+			if($disable.value || $readonly.value) { return; }
 
 
 			event.preventDefault();
@@ -154,7 +154,7 @@
 
 
 		dragger.addEventListener('paste', async event => {
-			if($readonly.value) { return; }
+			if($disable.value || $readonly.value) { return; }
 
 
 			event.preventDefault();
@@ -166,7 +166,7 @@
 
 
 	const selectFile = () => {
-		if($readonly.value) { return; }
+		if($disable.value || $readonly.value) { return; }
 
 
 		const input = document.createElement('input');
@@ -182,40 +182,40 @@
 
 <style lang="sass" scoped>
 p-disabling
-	@apply relative float-left top-2 w-4 h-4 mx-1 border-2 border-solid select-none cursor-pointer appearance-none filter hover:brightness-110
-	border-color: var(--colorMain)
+	@apply inblock relative float-left top-2 w-4 h-4 mx-1 border-solid select-none cursor-pointer appearance-none
+	@apply filter hover:brightness-110
+	@apply border-2 border-[var(--cMain)]
 
 	&[checked]
-		background-color: var(--colorMain)
+		@apply bg-[var(--cMain)]
 
 		&::after
 			content: ""
-			@apply absolute border-2 border-solid border-t-0 border-r-0
-			top: 2px
-			left: 0px
-			width: 0.75rem
-			height: 0.4rem
-			border-color: var(--colorTextMain)
+			@apply absolute border-2 border-solid border-t-0 border-r-0 border-[var(--cTextMain)]
+			@apply top-[2px] left-[0px]
+			@apply w-[0.75rem] h-[0.4rem]
 			transform: rotate(-45deg) scale(0.77, 0.77)
-
 
 p-label
 	@apply block relative float-left w-auto h-full overflow-hidden cursor-pointer select-none
 
+	&[disabled]
+		@apply text-[var(--cTextMainDisabled)] filter brightness-75 select-none cursor-default
 
 p-value
 	@apply block relative w-auto h-full overflow-hidden border-solid
 	z-index: 1
 
 p-drag
-	@apply block h-full leading-[calc(theme("spacing.1")*24)] text-xl text-gray-400 text-center cursor-pointer
-	@apply border-2 border-dashed border-[var(--colorMain)]
+	@apply block h-full leading-[calc(theme("spacing.1")*24)] text-xl text-[var(--cMain)] text-center cursor-pointer
+	@apply border-2 border-dashed border-[var(--cMain)]
 
-	&:hover
-		color: var(--colorMain)
-		border-color: var(--colorMain)
+	&:hover:not([disabled])
+		@apply text-[var(--cTextMain)] bg-[var(--cMain)]
 
 	&[dragging]
-		@apply border-solid border-[var(--colorOkay)] text-[var(--colorOkay)]
+		@apply border-solid border-[var(--cOkay)] text-[var(--cOkay)]
 
+	&[disabled]
+		@apply text-[var(--cTextMainDisabled)] border-[var(--cTextMainDisabled)] filter brightness-75 select-none cursor-default
 </style>

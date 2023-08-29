@@ -304,7 +304,7 @@
 
 <style lang="sass" scoped>
 comp-grid
-	@apply block overflow-hidden border rounded-sm shadow-mdd border-gray-300
+	@apply block overflow-hidden border rounded-sm shadow-mdd border-[var(--cBorderBack)]
 
 	&[no-border]
 			@apply border-0
@@ -314,33 +314,35 @@ comp-grid
 		border-spacing: 0
 
 		&[head]
-			@apply text-gray-400
+			color: color-mix(in srgb, var(--cTextMain) 70%, var(--cMain))
 
 			[cell][_lastInRow]
-				@apply text-gray-500
+				@apply text-[var(--cTextMain)]
+
 
 				[sort-icon]
 					@apply absolute h-4 top-2 right-2 cursor-pointer
 
 					&[_enable]
-						color: var(--colorOkay)
+						@apply text-[var(--cOkay)]
 
 		&[body]
 			>[row]
 				>[cell]
 					&[even]
-						@apply bg-white
+						@apply bg-[var(--cBack)]
 					&[odd]
-						@apply bg-gray-100
+						background-color: color-mix(in srgb, var(--cMain) 20%, var(--cBack))
 
 				&[hover]:hover
 					>[cell]
-						@apply bg-blue-100 cursor-pointer
+						@apply cursor-pointer
+						background-color: color-mix(in srgb, var(--cMain) 70%, var(--cBack))
 
 				&[selected]
 					>[cell]
 						cursor: default !important
-						background-color: theme("colors.green.100") !important
+						background-color: color-mix(in srgb, var(--cMain) 90%, var(--cBack)) !important
 
 
 		[row]
@@ -353,19 +355,17 @@ comp-grid
 				@apply relative p-0
 
 			[cell]
-				@apply relative overflow-hidden whitespace-nowrap overflow-ellipsis p-2 border border-gray-300
+				@apply relative overflow-hidden whitespace-nowrap overflow-ellipsis p-2 border border-[var(--cBorderBack)]
 
 				&:first-child
 					@apply border-l-0
 
 				&:last-child
-					@apply border-r
-					border-right-color: theme("colors.gray.300")
+					@apply border-r border-r-[var(--cBorderBack)]
 					border-right-style: dashed
 
 				&[_lastInRow]
-					@apply border-b
-					border-bottom-color: theme("colors.gray.300")
+					@apply border-b border-b-[var(--cBorderBack)]
 					border-bottom-style: dashed
 
 				&[no-padding]
@@ -376,12 +376,8 @@ comp-grid
 
 
 	p-head
-		@apply relative block w-full z-10 overflow-x-hidden overflow-y-scroll
-		background-color: #dbf0ff
+		@apply relative block w-full z-10 overflow-x-hidden overflow-y-scroll bg-[var(--cMain)]
 
 	p-body
 		@apply relative block w-full z-20 overflow-scroll
-
-		&::-webkit-scrollbar-track
-			@apply bg-gray-100
 </style>

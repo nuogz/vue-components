@@ -26,7 +26,7 @@ export const props = {
  * @param {import('vue').ComputedRef<boolean>} $disabling
  */
 export const setup = (props, $disabling) => {
-	const labelTextOnly_ = computed(() => bropBoolean(props.labelTextOnly));
+	const $labelTextOnly = computed(() => bropBoolean(props.labelTextOnly));
 
 	const labelQuick = computed(() => {
 		const { label } = props;
@@ -35,7 +35,7 @@ export const setup = (props, $disabling) => {
 		let result = [];
 
 		if(label && labelSafe.trim()) {
-			result = labelTextOnly_.value ? [labelSafe.trim()] : labelSafe.split('|');
+			result = $labelTextOnly.value ? [labelSafe.trim()] : labelSafe.split('|');
 		}
 
 		return result;

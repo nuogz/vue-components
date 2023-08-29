@@ -1,3 +1,6 @@
+import './index.pcss';
+
+
 export { default as Click } from './src/click.vue';
 
 export { default as Texter } from './src/texter.vue';

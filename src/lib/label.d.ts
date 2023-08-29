@@ -33,7 +33,7 @@ export declare const props: {
 
 
 
-export declare const setup: (props: import('vue').ComponentObjectPropsOptions, disabling_: import('vue').ComputedRef<boolean>) => {
+export declare const setup: (props: import('vue').ComponentObjectPropsOptions, $disabling: import('vue').ComputedRef<boolean>) => {
 	$label: import('vue').ComputedRef<string | null>;
 	$labelWidth: import('vue').ComputedRef<string | null>;
 	$labelAlign: import('vue').ComputedRef<string>;

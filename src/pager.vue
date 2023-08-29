@@ -84,29 +84,24 @@
 
 <style lang="sass" scoped>
 comp-pager
-	@apply relative
+	@apply inblock relative
 
 	>*
 		@apply inblock h-full border-none text-center bg-transparent
 
 	p-button
 		@apply relative cursor-pointer
-		@apply border border-solid
-		width: 2rem
-		border-color: var(--colorMain)
-		color: var(--colorMain)
-		background-color: var(--colorTextMain)
+		@apply border-2 border-solid w-8
+		@apply text-[var(--cTextBack)] bg-[var(--cBack)] border-[var(--cMain)]
 
 		&:not(.split):hover
 			@apply shadow-md filter brightness-110
 
 		&.invalid
-			@apply cursor-not-allowed
-			color: lightgray
+			@apply cursor-default text-[var(--cTextMainDisabled)]
 
 			&:hover
-				@apply bg-transparent
-				border-color: steelblue
+				@apply shadow-none filter-none
 
 		&[left]
 			@apply rounded-l-sm mr-2
@@ -115,16 +110,16 @@ comp-pager
 			@apply rounded-r-sm ml-2
 
 	[page-now]
-		@apply relative p-0 outline-none align-baseline border-b-2 border-solid
+		@apply relative p-0 outline-none align-baseline border-b-2 border-solid text-[var(--cTextBack)]
 
 		width: 2.4rem
-		color: var(--colorText)
-		border-image: linear-gradient(90deg, var(--colorMain) 64%, rgba(1,133,224,0.7) 92%) 1
+
+		border-image: linear-gradient(90deg, var(--cMain) 64%, var(--cBaseComple) 92%) 1
 		font-size: inherit
 		line-height: inherit
 
 		&:hover
-			border-image: linear-gradient(270deg, var(--colorMain) 64%, rgba(1,133,224,0.7) 92%) 1
+			border-image: linear-gradient(270deg, var(--cMain) 64%, var(--cBaseComple) 92%) 1
 
 	[spliter]
 		@apply mx-1

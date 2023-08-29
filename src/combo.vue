@@ -4,7 +4,7 @@
 		<p-disabling v-if="$disabling" :checked="brop(!$disable)" @click="$disable = !$disable" />
 
 		<!-- 标签 -->
-		<p-label v-if="$label" :style="styleLabel" @click="$disabling && ($disable = !$disable)">{{ $label }}</p-label>
+		<p-label v-if="$label" :disabled="brop($disable)" :style="styleLabel" @click="$disabling && ($disable = !$disable)">{{ $label }}</p-label>
 
 		<!-- 输入框 -->
 		<p-value ref="domValue" :hide-outline="brop(isShowDrop)" :only="brop(!$disabling && !$label)" @click="atClickDrop($event)">
@@ -15,10 +15,10 @@
 				:placeholder="place"
 				:tabindex="tab"
 				:readonly="true"
-				:disabled="$disable"
+				:disabled="brop($disable)"
 				@keypress.space.stop.prevent="atClickDrop"
 			/>
-			<Icon :icon="isShowDrop ? faAngleUp : faAngleDown" swap-opacity class="w-4 trans" />
+			<Icon drop-icon :disabled="brop($disable)" :icon="isShowDrop ? faAngleUp : faAngleDown" swap-opacity class="w-4" />
 		</p-value>
 
 		<!-- 下拉列表 -->
@@ -77,7 +77,7 @@
 
 	const props = defineProps({
 		/** 主值 */
-		modelValue: { type: [Boolean, String, Number, Array], default: '' },
+		modelValue: { type: [String, Number, Boolean, Array], default: '' },
 		/** （开关）是否禁用主值 */
 		disable: { type: Boolean, default: false },
 		/** 主值-文本值 */
@@ -286,7 +286,7 @@
 	const atHideDrop = () => {
 		isShowDrop.value = false;
 
-		nextTick(() => (domInput.value.select(), domInput.value.focus()));
+		nextTick(() => domInput.value.focus());
 	};
 
 
@@ -399,29 +399,29 @@
 
 <style lang="sass" scoped>
 p-disabling
-	@apply inblock relative float-left top-2 w-4 h-4 mx-1 border-2 border-solid select-none cursor-pointer appearance-none filter hover:brightness-110
-	border-color: var(--colorMain)
+	@apply inblock relative float-left top-2 w-4 h-4 mx-1 border-solid select-none cursor-pointer appearance-none
+	@apply filter hover:brightness-110
+	@apply border-2 border-[var(--cMain)]
 
 	&[checked]
-		background-color: var(--colorMain)
+		@apply bg-[var(--cMain)]
 
 		&::after
 			content: ""
-			@apply absolute border-2 border-solid border-t-0 border-r-0
-			top: 2px
-			left: 0px
-			width: 0.75rem
-			height: 0.4rem
-			border-color: var(--colorTextMain)
+			@apply absolute border-2 border-solid border-t-0 border-r-0 border-[var(--cTextMain)]
+			@apply top-[2px] left-[0px]
+			@apply w-[0.75rem] h-[0.4rem]
 			transform: rotate(-45deg) scale(0.77, 0.77)
 
 p-label
 	@apply inblock elli relative float-left w-auto h-full overflow-hidden cursor-pointer select-none
 
+	&[disabled]
+		@apply text-[var(--cTextMainDisabled)] filter brightness-75 select-none cursor-default
 
 p-value
-	@apply block relative w-auto h-full overflow-hidden border-b-2 border-solid
-	border-color: var(--colorMain)
+	@apply block relative w-auto h-full overflow-hidden
+	@apply border-b-2 border-solid border-[var(--cMain)]
 	padding: 0 0.25rem
 	z-index: 1
 
@@ -440,19 +440,19 @@ p-value
 		font-size: inherit
 
 		&:disabled
-			color: var(--colorDisable)
+			@apply text-[var(--cTextMainDisabled)] filter brightness-75 select-none cursor-default
 
-	svg
-		@apply relative h-full w-4 text-base text-gray-300 align-middle
+	[drop-icon]
+		@apply relative h-full w-4 text-base text-[var(--cMain)] align-middle trans
 
-	&:hover
-		svg
-			@apply text-gray-400 trans
+		&:hover
+			@apply text-[var(--cTextBack)]
 
+		&[disabled]
+			@apply text-[var(--cTextMainDisabled)] filter brightness-75 select-none cursor-default
 
 p-drop
-	@apply block bg-white py-0 border-2 rounded-md shadow-mdd outline-none
-	border-color: var(--colorMain)
+	@apply block bg-[var(--cBack)] py-0 border-2 border-[var(--cMain)] rounded-sm shadow-mdd outline-none
 
 	p-filter
 		@apply block h-8 leading-8 overflow-x-hidden overflow-y-scroll relative
@@ -471,27 +471,23 @@ p-drop
 
 
 	p-tip
-		@apply sticky float-right right-1 top-1 text-gray-400 text-xs select-none z-50
+		@apply sticky float-right right-1 top-1 text-[var(--cTextBackDisabled)] text-xs select-none z-50
 
 		&[first]
-			@apply text-white
+			@apply text-[var(--cTextMain)]
 
 	p-option
 		@apply trans block px-2 cursor-pointer py-1
 
-		&:not([disabled]):hover, &[focus-now]
-			background-color: var(--colorMain)
-			color: var(--colorTextMain)
+		&:hover:not([disabled]), &[focus-now]
+			@apply text-[var(--cTextMain)] bg-[var(--cMain)]
 
 		&[selected]
-			@apply font-bold font-bold
-			color: var(--colorMain)
+			@apply font-bold font-bold text-[var(--cMain)]
 
 			&:hover
-				background-color: var(--colorTextMain)
-				color: var(--colorMain)
+				@apply text-[var(--cTextBack)] bg-[unset]
 
 		&[disabled]
-			@apply select-none cursor-auto
-			color: var(--colorDisable)
+			@apply text-[var(--cTextMainDisabled)] filter brightness-75 select-none cursor-default
 </style>
