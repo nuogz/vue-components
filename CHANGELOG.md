@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v1.11.1 - 2023.08.30 00
+* fix `package.json`
+
+
 ## v1.11.0 - 2023.08.30 00
 * (new) `Click` support `disable` prop
 * (break) renew color-related CSS variables
