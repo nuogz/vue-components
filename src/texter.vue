@@ -124,13 +124,13 @@
 					false :
 					(
 						$type.value == 'number' ?
-							~~value :
+							Number(value) :
 							value
 					)
 			);
 		}
 		else {
-			emit('update:modelValue', $type.value == 'number' ? ~~value : value);
+			emit('update:modelValue', $type.value == 'number' ? Number(value) : value);
 		}
 	});
 

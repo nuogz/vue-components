@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v1.11.3 - 2023.09.11 17
+* Fixed the bug that `texter` becomes integer when inputting decimals
+
+
 ## v1.11.2 - 2023.09.11 17
 * `texter` support `step` prop
 
