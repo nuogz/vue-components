@@ -81,6 +81,11 @@ declare const PR: {
 		type: (StringConstructor | NumberConstructor)[];
 		default: null;
 	};
+	/** 步进 */
+	step: {
+		type: (StringConstructor | NumberConstructor)[];
+		default: null;
+	};
 
 	/** （控制）切换文本框焦点 */
 	focusSwitch: {

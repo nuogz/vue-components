@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v1.11.2 - 2023.09.11 17
+* `texter` support `step` prop
+
+
 ## v1.11.1 - 2023.08.30 00
 * fix `package.json`
 

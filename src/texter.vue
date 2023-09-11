@@ -18,6 +18,7 @@
 				:disabled="$disable"
 				:min="min"
 				:max="max"
+				:step="step"
 				@mousewheel="$type == 'number' && atMouseWheel"
 			/>
 		</p-value>
@@ -67,6 +68,8 @@
 		min: { type: [Number, String], default: null },
 		/** 最大数字 */
 		max: { type: [Number, String], default: null },
+		/** 步进 */
+		step: { type: [Number, String], default: null },
 
 		/** （控制）切换文本框焦点 */
 		focusSwitch: { type: Boolean, default: false },
