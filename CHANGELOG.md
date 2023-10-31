@@ -1,7 +1,13 @@
 # CHANGELOG
 
+## v1.11.4 - 2023.10.31 11
+* fix `timer`'s inability to parse data in case of no date mode
+* renew `timer`'s code
+* bump up dependencies
+
+
 ## v1.11.3 - 2023.09.11 17
-* Fixed the bug that `texter` becomes integer when inputting decimals
+* fixed the bug that `texter` becomes integer when inputting decimals
 
 
 ## v1.11.2 - 2023.09.11 17

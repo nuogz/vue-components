@@ -1,6 +1,6 @@
 {
 	"name": "@nuogz/vue-components",
-	"version": "1.11.3",
+	"version": "1.11.4",
 	"description": "frontend components based on Vue.js 3.x",
 	"author": "Nuogz",
 	"license": "LGPL-3.0-or-later",
@@ -29,16 +29,16 @@
 		"@fortawesome/free-solid-svg-icons": "^6.4.2",
 		"@fortawesome/vue-fontawesome": "^3.0.3",
 		"@nuogz/utility": "^1.7.1",
-		"autoprefixer": "^10.4.15",
-		"dayjs": "^1.11.9",
-		"eslint": "^8.48.0",
-		"eslint-plugin-vue": "^9.17.0",
-		"postcss": "^8.4.28",
-		"sass": "^1.66.1",
-		"tailwindcss": "^3.3.3",
+		"autoprefixer": "^10.4.16",
+		"dayjs": "^1.11.10",
+		"eslint": "^8.52.0",
+		"eslint-plugin-vue": "^9.18.1",
+		"postcss": "^8.4.31",
+		"sass": "^1.69.5",
+		"tailwindcss": "^3.3.5",
 		"tippy.js": "^6.3.7",
-		"vue": "^3.3.4",
-		"vue-eslint-parser": "^9.3.1"
+		"vue": "^3.3.7",
+		"vue-eslint-parser": "^9.3.2"
 	},
 	"peerDependencies": {
 		"@fortawesome/free-solid-svg-icons": "^6",

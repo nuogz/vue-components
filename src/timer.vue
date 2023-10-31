@@ -22,12 +22,12 @@
 		<!-- 下拉列表 -->
 		<p-drop ref="domDrop" tabindex="0">
 			<p-drop-values>
-				<p-drop-value v-if="isShowOptionsYear"><span>{{ momentValueSafe.format('YYYY') }}</span>年</p-drop-value>
-				<p-drop-value v-if="isShowOptionsMonth"><span>{{ momentValueSafe.format('MM') }}</span>月</p-drop-value>
-				<p-drop-value v-if="isShowOptionsDate"><span>{{ momentValueSafe.format('DD') }}</span>日</p-drop-value>
-				<p-drop-value v-if="isShowOptionsHour"><span>{{ momentValueSafe.format('HH') }}</span>时</p-drop-value>
-				<p-drop-value v-if="isShowOptionsMinute"><span>{{ momentValueSafe.format('mm') }}</span>分</p-drop-value>
-				<p-drop-value v-if="isShowOptionsSecond"><span>{{ momentValueSafe.format('ss') }}</span>秒</p-drop-value>
+				<p-drop-value v-if="isShowOptionsYear"><span>{{ timeValueSafe.format('YYYY') }}</span>年</p-drop-value>
+				<p-drop-value v-if="isShowOptionsMonth"><span>{{ timeValueSafe.format('MM') }}</span>月</p-drop-value>
+				<p-drop-value v-if="isShowOptionsDate"><span>{{ timeValueSafe.format('DD') }}</span>日</p-drop-value>
+				<p-drop-value v-if="isShowOptionsHour"><span>{{ timeValueSafe.format('HH') }}</span>时</p-drop-value>
+				<p-drop-value v-if="isShowOptionsMinute"><span>{{ timeValueSafe.format('mm') }}</span>分</p-drop-value>
+				<p-drop-value v-if="isShowOptionsSecond"><span>{{ timeValueSafe.format('ss') }}</span>秒</p-drop-value>
 				<Click v-if="isShowOptionsDate" drop-button white text="向前一天" @click="atSelect('day-add', -1)" />
 				<Click drop-button white text="当前时间" @click="atSelect('now')" />
 				<Click v-if="isShowOptionsDate" drop-button white text="向后一天" @click="atSelect('day-add', 1)" />
@@ -288,20 +288,20 @@
 		return time.isValid() ? time : null;
 	});
 
-	/** 当前时间的Moment封装 */
-	const momentValue = computed(() => Day($value.value));
-	const momentValueSafe = computed(() => momentValue.value.isValid() ? momentValue.value : Day().startOf('day'));
+	/** 当前时间的Dayjs封装 */
+	const timeValue = computed(() => Day($value.value, format.value));
+	const timeValueSafe = computed(() => timeValue.value.isValid() ? timeValue.value : Day().startOf('day'));
 	/** 当前时间的显示值 */
 	const textShow = computed(() => {
-		if(momentValue.value.isValid()) {
+		if(timeValue.value.isValid()) {
 			if(typeof $showFormatter.value == 'string') {
-				return momentValue.value.format($showFormatter.value);
+				return timeValue.value.format($showFormatter.value);
 			}
 			else if(typeof $showFormatter.value == 'function') {
-				return $showFormatter(momentValue.value);
+				return $showFormatter(timeValue.value);
 			}
 			else {
-				return momentValue.value.format(sormat.value);
+				return timeValue.value.format(sormat.value);
 			}
 		}
 		else {
@@ -318,7 +318,7 @@
 		let year = yearNow + 4;
 		while(year >= yearNow - 7) {
 			options.push({
-				select: momentValueSafe.value.year() == year,
+				select: timeValueSafe.value.year() == year,
 				data: year--
 			});
 		}
@@ -331,7 +331,7 @@
 		let month = 1;
 		while(month <= 12) {
 			options.push({
-				select: momentValueSafe.value.month() + 1 == month,
+				select: timeValueSafe.value.month() + 1 == month,
 				data: month++
 			});
 		}
@@ -340,7 +340,7 @@
 	});
 	const optionsDay = ref(['日', '一', '二', '三', '四', '五', '六']);
 	const optionsDate = computed(() => {
-		const value = momentValueSafe.value;
+		const value = timeValueSafe.value;
 		const begin = $timeBegin.value;
 		const end = $timeEnd.value;
 
@@ -415,7 +415,7 @@
 		let hour = 0;
 		while(hour <= 23) {
 			options.push({
-				select: momentValueSafe.value.hour() == hour,
+				select: timeValueSafe.value.hour() == hour,
 				data: modeEndTime.value ? hour + 1 : hour
 			});
 
@@ -431,7 +431,7 @@
 		let minute = 0;
 		while(minute <= 59) {
 			options.push({
-				select: momentValueSafe.value.minute() == minute,
+				select: timeValueSafe.value.minute() == minute,
 				data: modeEndTime.value ? minute + 1 : minute
 			});
 
@@ -447,7 +447,7 @@
 		let second = 0;
 		while(second <= 59) {
 			options.push({
-				select: momentValueSafe.value.second() == second,
+				select: timeValueSafe.value.second() == second,
 				data: modeEndTime.value ? second + 1 : second
 			});
 
@@ -480,24 +480,24 @@
 		}
 	};
 	const atSelect = (type, data) => {
-		let momentNew;
+		let timeNew;
 
 
 		if(type == 'now') {
-			momentNew = Day();
+			timeNew = Day();
 		}
 		else if(type == 'day-add') {
-			momentNew = momentValueSafe.value.add(data, 'day');
+			timeNew = timeValueSafe.value.add(data, 'day');
 		}
 		else if(type == 'fulldate' && !data.outRange) {
-			momentNew = momentValueSafe.value.year(data.year).month(data.month - 1).date(data.date);
+			timeNew = timeValueSafe.value.year(data.year).month(data.month - 1).date(data.date);
 		}
 		else {
-			momentNew = momentValueSafe.value[type](data);
+			timeNew = timeValueSafe.value[type](data);
 		}
 
 
-		$value.value = momentNew.format(format.value);
+		$value.value = timeNew.format(format.value);
 
 
 		atShowDrop();
