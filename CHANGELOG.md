@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v1.12.0 - 2023.12.06 17
+* tweak enviroment
+* bump up dependencies
+
+
 ## v1.11.4 - 2023.10.31 11
 * fix `timer`'s inability to parse data in case of no date mode
 * renew `timer`'s code
