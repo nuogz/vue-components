@@ -256,6 +256,10 @@
 			? props.keyShow[type]
 			: props.keyShow;
 
+		if(keyShow == '$$') {
+			return data;
+		}
+
 		if(typeof keyShow == 'function') {
 			return keyShow(data) ?? '';
 		}
@@ -317,7 +321,7 @@
 	};
 	const atClickSelect = option => {
 		if($multiSelect.value) {
-			option.selected = !!option.selected;
+			option.selected = !option.selected;
 
 			const valueNow = option.value;
 

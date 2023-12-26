@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v1.12.1 - 2023.12.26 11
+* combo: new keyword `$$` for prop `key-show` to show option self
+* combo: fix bug while mulit selecting
+* bump up dependencies
+
+
 ## v1.12.0 - 2023.12.06 17
 * tweak enviroment
 * bump up dependencies
