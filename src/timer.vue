@@ -592,9 +592,9 @@ p-drop
 
 			p-drop-option
 				@apply block px-2 mx-1 text-sm leading-6 text-center cursor-pointer border border-transparent
+				min-width: 4rem
 				&:hover
 					@apply border-[var(--cMain)]
-				min-width: 4rem
 
 			p-drop-option-date
 				@apply relative inblock w-6 h-8 leading-8 text-sm text-center cursor-pointer border border-transparent z-10

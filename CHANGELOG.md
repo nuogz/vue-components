@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v1.12.2 - 2024.07.21 10
+* improve: Tweak Timer style to match sass mixed declarations bearking change
+* build: Bump up dependencies
+
+
 ## v1.12.1 - 2023.12.26 11
 * combo: new keyword `$$` for prop `key-show` to show option self
 * combo: fix bug while mulit selecting
