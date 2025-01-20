@@ -6,13 +6,21 @@
 		"experimentalDecorators": true,
 		"strict": true,
 		"allowJs": true,
-		"jsx": "preserve"
+		"jsx": "preserve",
+		"declaration": true,
+		"declarationDir": "./types",
+		"emitDeclarationOnly": true
 	},
 	"include": [
+		"bases.d.ts",
 		"**/*.js",
 		"**/*.vue"
 	],
 	"exclude": [
-		"node_modules"
+		"eslint.config.js",
+		"postcss.config.js",
+		"tailwind.config.js",
+		"node_modules",
+		"test"
 	]
 }
