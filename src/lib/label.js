@@ -5,7 +5,9 @@ import { bropBoolean } from '@nuogz/utility';
 
 
 /** @type {import('vue').ComponentObjectPropsOptions} */
-export const props = {
+export const propsCommon = {
+	/** 只读（布尔开关） */
+	readonly: { type: [Boolean, String], default: false },
 	/** 控件属性 */
 	param: { type: String, default: null },
 	/** 标签 */
@@ -22,14 +24,14 @@ export const props = {
 
 
 /**
- * @param {import('vue').ComponentObjectPropsOptions} props
+ * @param {import('vue').ComponentObjectPropsOptions} propsComponent
  * @param {import('vue').ComputedRef<boolean>} $disabling
  */
-export const setup = (props, $disabling) => {
-	const $labelTextOnly = computed(() => bropBoolean(props.labelTextOnly));
+export const setupCommon = (propsComponent, $disabling) => {
+	const $labelTextOnly = computed(() => bropBoolean(propsComponent.labelTextOnly));
 
-	const labelQuick = computed(() => {
-		const { label } = props;
+	const $labelQuick = computed(() => {
+		const { label } = propsComponent;
 		const labelSafe = String(label);
 
 		let result = [];
@@ -42,15 +44,15 @@ export const setup = (props, $disabling) => {
 	});
 
 	const $label = computed(() => {
-		const label = labelQuick.value[0];
-		const labelSplit = props.labelSplit;
+		const label = $labelQuick.value[0];
+		const labelSplit = propsComponent.labelSplit;
 
 		return label ? `${label}${labelSplit}` : null;
 	});
 
 	const $labelWidth = computed(() => {
-		const widthQuick = labelQuick.value[1];
-		const widthLabel = props.labelWidth;
+		const widthQuick = $labelQuick.value[1];
+		const widthLabel = propsComponent.labelWidth;
 
 		let result = null;
 
@@ -63,8 +65,8 @@ export const setup = (props, $disabling) => {
 	});
 
 	const $labelAlign = computed(() => {
-		const alignQuick = labelQuick.value[2];
-		const alignLabel = props.labelAlign;
+		const alignQuick = $labelQuick.value[2];
+		const alignLabel = propsComponent.labelAlign;
 
 		let result = 'right';
 

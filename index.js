@@ -1,4 +1,4 @@
-import './index.pcss';
+import './src/index.pcss';
 
 
 export { default as Click } from './src/click.vue';

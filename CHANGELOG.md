@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## v1.13.0 - 2024.08.15 15
+* refactor(click): add border with same color as the background to ensure that leading doesn't change after switching to white style
+* style: tweak codes
+* docs: better types
+* chore: improve develop environments
+* deps: bump up dependencies
+
+
 ## v1.12.2 - 2024.07.21 10
 * improve: Tweak Timer style to match sass mixed declarations bearking change
 * build: Bump up dependencies

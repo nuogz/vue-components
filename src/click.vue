@@ -5,37 +5,37 @@
 </template>
 
 <script setup>
-	import { brop } from '@nuogz/utility';
+import { brop } from '@nuogz/utility';
 
-	import { FontAwesomeIcon as Icon } from '@fortawesome/vue-fontawesome';
+import { FontAwesomeIcon as Icon } from '@fortawesome/vue-fontawesome';
 
 
-	defineProps({
-		/** 按钮-文本 */
-		text: { type: String, default: '' },
 
-		/** （开关）样式-反转 */
-		white: { type: [Boolean, String], default: false },
-		/** （开关）样式-禁用 */
-		disable: { type: [Boolean, String], default: false },
+defineProps({
+	/** 按钮-文本 */
+	text: { type: String, default: '' },
 
-		/** 图标 */
-		icon: { type: [String, Array, Object], default: null },
-		/** （开关）图标-旋转 */
-		spin: { type: Boolean, default: false },
-	});
+	/** 图标 */
+	icon: { type: [String, Array, Object], default: null },
+	/** 图标-旋转 */
+	spin: { type: Boolean, default: false },
+
+	/** 样式-反转（布尔开关） */
+	white: { type: [Boolean, String], default: false },
+	/** 样式-禁用（布尔开关） */
+	disable: { type: [Boolean, String], default: false },
+});
 </script>
 
 <style lang="sass" scoped>
 comp-click
-	@apply px-2 rounded-sm cursor-pointer text-center select-none elli
-	@apply text-[var(--cTextMain)] bg-[var(--cMain)]
+	@apply px-2 border-2 rounded-sm cursor-pointer text-center select-none elli
+	@apply text-[var(--cTextMain)] bg-[var(--cMain)] border-[var(--cMain)]
 
 	&:focus:not([disabled]), &:hover:not([disabled])
 		@apply shadow-md filter brightness-110
 
 	&[white]
-		@apply border-2
 		@apply text-[var(--cTextBack)] bg-[var(--cBack)] border-[var(--cMain)]
 
 	&[disabled]

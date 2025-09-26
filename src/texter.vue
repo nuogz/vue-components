@@ -30,7 +30,7 @@
 
 	import { brop, bropBoolean } from '@nuogz/utility';
 
-	import { props as propsCommon, setup as setupCommon } from './lib/label.js';
+	import { propsCommon as propsCommon, setupCommon as setupCommon } from './lib/label.js';
 
 
 

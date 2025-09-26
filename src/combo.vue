@@ -61,344 +61,341 @@
 </template>
 
 <script setup>
-	import { computed, nextTick, onMounted, ref, watch } from 'vue';
+import { computed, nextTick, onMounted, ref, watch } from 'vue';
 
-	import { FontAwesomeIcon as Icon } from '@fortawesome/vue-fontawesome';
-	import { faAngleDown, faAngleUp } from '@fortawesome/free-solid-svg-icons';
-	import Tippy from 'tippy.js';
+import { FontAwesomeIcon as Icon } from '@fortawesome/vue-fontawesome';
+import { faAngleDown, faAngleUp } from '@fortawesome/free-solid-svg-icons';
+import Tippy from 'tippy.js';
 
-	import { brop, bropBoolean } from '@nuogz/utility';
+import { brop, bropBoolean } from '@nuogz/utility';
 
-	import { props as propsCommon, setup as setupCommon } from './lib/label.js';
+import { propsCommon, setupCommon } from './lib/label.js';
 
-	import Texter from './texter.vue';
-
-
-
-	const props = defineProps({
-		/** 主值 */
-		modelValue: { type: [String, Number, Boolean, Array], default: '' },
-		/** （开关）是否禁用主值 */
-		disable: { type: Boolean, default: false },
-		/** 主值-文本值 */
-		text: { type: String, default: '' },
-		/** 启用禁用框下的默认值 */
-		default: { type: [String, Number, Boolean], default: '' },
-
-		/** （开关）启用禁用框 */
-		disabling: { type: [Boolean, String], default: false },
-		/** （开关）只读 */
-		readonly: { type: [Boolean, String], default: false },
+import Texter from './texter.vue';
 
 
-		...propsCommon,
+
+const props = defineProps({
+	/** 主值 */
+	modelValue: { validator() { return true; }, default: '' },
+	/** 是否禁用主值（布尔开关） */
+	disable: { type: Boolean, default: false },
+	/** 主值-文本值 */
+	text: { type: String, default: '' },
+	/** 启用禁用框下的默认值 */
+	default: { type: [String, Number, Boolean], default: '' },
+	/** （开关）启用禁用框 */
+	disabling: { type: [Boolean, String], default: false },
 
 
-		/** 下拉选项 */
-		options: { type: Array, default: () => ([]), required: true },
+	...propsCommon,
 
 
-		/** 留空提示 */
-		place: { type: [Number, String], default: '' },
-		/** 焦点顺序 */
-		tab: { type: [Number, String], default: 0 },
-
-		/** 文本-对齐方式 */
-		align: { type: String, default: null },
-		/** 下拉选项-对齐方式 */
-		alignOptions: { type: String, default: null },
-
-		/** 筛选选项 */
-		filter: { type: [String, Boolean, Function], default: false },
-		/** （开关）多选 */
-		multiSelect: { type: [Boolean, String], default: false },
-
-		/** 显示值所在的键值 */
-		keyShow: { type: [String, Function, Array], default: 'text' },
-		/** 数据值所在的键值 */
-		keyValue: { type: String, default: 'value' },
-
-		/** 数据分隔符 */
-		separatorValue: { type: String, default: ',' },
-		/** 显示分隔符 */
-		separatorShow: { type: String, default: '、' },
-
-		/** （控制）切换下拉显示隐藏 */
-		openSwitch: { type: Boolean, default: false },
-	});
-	const emit = defineEmits(['update:modelValue', 'update:disable', 'update:value']);
+	/** 下拉选项 */
+	options: { type: Array, default: () => ([]), required: true },
 
 
-	const $multiSelect = computed(() => props.multiSelect === 'array' ? props.multiSelect : bropBoolean(props.multiSelect));
-	const $disabling = computed(() => bropBoolean(props.disabling));
-	const $readonly = computed(() => bropBoolean(props.readonly));
+	/** 留空提示 */
+	place: { type: [Number, String], default: '' },
+	/** 焦点顺序 */
+	tab: { type: [Number, String], default: 0 },
 
-	const { $label, $labelWidth, $labelAlign } = setupCommon(props, $disabling);
+	/** 文本-对齐方式 */
+	align: { type: String, default: null },
+	/** 下拉选项-对齐方式 */
+	alignOptions: { type: String, default: null },
 
-	const styleLabel = computed(() => ({ width: $labelWidth.value, textAlign: $labelAlign.value }));
+	/** 筛选选项 */
+	filter: { type: [String, Boolean, Function], default: false },
+	/** （开关）多选 */
+	multiSelect: { type: [Boolean, String], default: false },
 
-	const $value = ref($disabling.value ? (props.modelValue === false ? props.default : props.modelValue) : props.modelValue);
-	const $disable = ref($disabling.value ? (props.modelValue === false ? true : false) : props.disable);
+	/** 显示值所在的键值 */
+	keyShow: { type: [String, Function, Array], default: 'text' },
+	/** 数据值所在的键值 */
+	keyValue: { type: String, default: 'value' },
 
-	watch(() => props.disable, disable => {
-		if(!$disabling.value) {
-			$disable.value = disable;
-		}
-	});
-	watch(() => props.modelValue, modelValue => {
-		if($disabling.value) {
-			if(modelValue === false) {
-				$disable.value = true;
-			}
-			else {
-				$disable.value = false;
-				$value.value = modelValue;
-			}
+	/** 数据分隔符 */
+	separatorValue: { type: String, default: ',' },
+	/** 显示分隔符 */
+	separatorShow: { type: String, default: '、' },
+
+	/** （控制）切换下拉显示隐藏 */
+	openSwitch: { type: Boolean, default: false },
+});
+const emit = defineEmits(['update:modelValue', 'update:disable', 'update:value']);
+
+
+const $multiSelect = computed(() => props.multiSelect === 'array' ? props.multiSelect : bropBoolean(props.multiSelect));
+const $disabling = computed(() => bropBoolean(props.disabling));
+const $readonly = computed(() => bropBoolean(props.readonly));
+
+const { $label, $labelWidth, $labelAlign } = setupCommon(props, $disabling);
+
+const styleLabel = computed(() => ({ width: $labelWidth.value, textAlign: $labelAlign.value }));
+
+const $value = ref($disabling.value ? (props.modelValue === false ? props.default : props.modelValue) : props.modelValue);
+const $disable = ref($disabling.value ? (props.modelValue === false ? true : false) : props.disable);
+
+watch(() => props.disable, disable => {
+	if(!$disabling.value) {
+		$disable.value = disable;
+	}
+});
+watch(() => props.modelValue, modelValue => {
+	if($disabling.value) {
+		if(modelValue === false) {
+			$disable.value = true;
 		}
 		else {
+			$disable.value = false;
 			$value.value = modelValue;
 		}
-	});
-	watch([$value, $disable], ([value, disable], [valuePrev, disablePrev]) => {
-		if($disabling.value) {
-			if(value != valuePrev) {
-				emit('update:value', value);
-			}
-			if(disable != disablePrev) {
-				emit('update:disable', disable);
-			}
+	}
+	else {
+		$value.value = modelValue;
+	}
+});
+watch([$value, $disable], ([value, disable], [valuePrev, disablePrev]) => {
+	if($disabling.value) {
+		if(value != valuePrev) {
+			emit('update:value', value);
+		}
+		if(disable != disablePrev) {
+			emit('update:disable', disable);
+		}
 
-			emit('update:modelValue', disable === true ? false : value);
+		emit('update:modelValue', disable === true ? false : value);
+	}
+	else {
+		emit('update:modelValue', value);
+	}
+});
+
+
+const $values = computed(() => {
+	const valueNow = $value.value;
+
+	if($multiSelect.value) {
+		if(valueNow instanceof Array) {
+			return valueNow.filter(v => v);
+		}
+		else if(valueNow) {
+			return String(valueNow).split(',').map(v => v.trim()).filter(v => v);
 		}
 		else {
-			emit('update:modelValue', value);
+			return [];
 		}
-	});
+	}
+	else {
+		return [valueNow];
+	}
+});
 
 
-	const $values = computed(() => {
-		const valueNow = $value.value;
+const getDataValue = data => props.keyValue == '$$' ? data : data?.[props.keyValue];
 
-		if($multiSelect.value) {
-			if(valueNow instanceof Array) {
-				return valueNow.filter(v => v);
-			}
-			else if(valueNow) {
-				return String(valueNow).split(',').map(v => v.trim()).filter(v => v);
-			}
-			else {
-				return [];
-			}
-		}
-		else {
-			return [valueNow];
-		}
-	});
+const isEqual = (valueNow, valueOption) => {
+	const typeValueOption = typeof valueOption;
 
+	if(valueOption === null || typeValueOption == 'undefined' || typeValueOption == 'boolean') {
+		return valueNow === valueOption;
+	}
 
-	const getDataValue = data => props.keyValue == '$$' ? data : data?.[props.keyValue];
+	return valueNow == valueOption;
+};
 
-	const isEqual = (valueNow, valueOption) => {
-		const typeValueOption = typeof valueOption;
+// 计算是否被选中
+const parseSelected = data => {
+	const valuesNow = $values.value;
+	const value = getDataValue(data);
 
-		if(valueOption === null || typeValueOption == 'undefined' || typeValueOption == 'boolean') {
-			return valueNow === valueOption;
-		}
-
-		return valueNow == valueOption;
+	return {
+		selected: $multiSelect.value
+			? !!~valuesNow.findIndex(valueNow => isEqual(valueNow, value))
+			: isEqual(valuesNow[0], value),
+		value
 	};
-
-	// 计算是否被选中
-	const parseSelected = data => {
-		const valuesNow = $values.value;
-		const value = getDataValue(data);
-
-		return {
-			selected: $multiSelect.value
-				? !!~valuesNow.findIndex(valueNow => isEqual(valueNow, value))
-				: isEqual(valuesNow[0], value),
-			value
-		};
-	};
+};
 
 
-	// 过滤函数
-	const textSearchFilter = ref('');
-	const filterNow = computed(() => typeof props.filter == 'function' ? props.filter : bropBoolean(props.filter));
-	const filterOption = (option, index, options) => {
-		const serach = textSearchFilter.value?.trim() ?? '';
+// 过滤函数
+const textSearchFilter = ref('');
+const filterNow = computed(() => typeof props.filter == 'function' ? props.filter : bropBoolean(props.filter));
+const filterOption = (option, index, options) => {
+	const serach = textSearchFilter.value?.trim() ?? '';
 
-		const filter = filterNow.value;
+	const filter = filterNow.value;
 
-		if(!filter) { return true; }
-		if(typeof filter == 'function') { return filter(serach, option.data, option, index, options); }
+	if(!filter) { return true; }
+	if(typeof filter == 'function') { return filter(serach, option.data, option, index, options); }
 
-		return renderShow(option.data)?.includes(serach);
-	};
-
-
-	// 原生选项, 决定本地列表或远程列表
-	const optionsRaw = computed(() => props.options);
-
-	// 选项封装和分类
-	const optionsNow = computed(() => optionsRaw.value.map(data => ({ data, ...parseSelected(data) })));
-	const optionsSelected = computed(() => optionsNow.value.filter(option => option.selected));
-	const optionsUnselected = computed(() =>
-		optionsNow.value.filter(option => !option.selected)
-			.filter((option, index, options) => filterOption(option, index, options))
-			.filter(option => !option.data?.hidden)
-	);
+	return renderShow(option.data)?.includes(serach);
+};
 
 
-	// 渲染选项和主值的显示
-	const renderShow = (data, type = 0) => {
-		const keyShow = props.keyShow instanceof Array
-			? props.keyShow[type]
-			: props.keyShow;
+// 原生选项, 决定本地列表或远程列表
+const optionsRaw = computed(() => props.options);
 
-		if(keyShow == '$$') {
-			return data;
-		}
-
-		if(typeof keyShow == 'function') {
-			return keyShow(data) ?? '';
-		}
-
-		return data?.[keyShow] ?? '';
-	};
-	const textShow = computed(() =>
-		$values.value
-			.map(v => renderShow(optionsRaw.value.find(data => isEqual(getDataValue(data), v)), 1))
-			.join(props.separatorShow)
-	);
+// 选项封装和分类
+const optionsNow = computed(() => optionsRaw.value.map(data => ({ data, ...parseSelected(data) })));
+const optionsSelected = computed(() => optionsNow.value.filter(option => option.selected));
+const optionsUnselected = computed(() =>
+	optionsNow.value.filter(option => !option.selected)
+		.filter((option, index, options) => filterOption(option, index, options))
+		.filter(option => !option.data?.hidden)
+);
 
 
-	const domValue = ref(null);
-	const domInput = ref(null);
-	const domDrop = ref(null);
+// 渲染选项和主值的显示
+const renderShow = (data, type = 0) => {
+	const keyShow = props.keyShow instanceof Array
+		? props.keyShow[type]
+		: props.keyShow;
 
-	const tippyDrop = ref(null);
-	const widthDrop = ref('');
-	const widthDropMin = ref('');
+	if(keyShow == '$$') {
+		return data;
+	}
 
-	const isShowDrop = ref(false);
-	const atShowDrop = () => {
-		isShowDrop.value = true;
+	if(typeof keyShow == 'function') {
+		return keyShow(data) ?? '';
+	}
 
-		nextTick(() => filterNow.value ? switchFocus.value = !switchFocus.value : domDrop.value.focus());
-	};
-	const atHideDrop = () => {
-		isShowDrop.value = false;
-
-		nextTick(() => domInput.value.focus());
-	};
-
-
-	const switchFocus = ref(false);
-
-	const atClickDrop = () => {
-		if($disable.value || $readonly.value) { return; }
-
-		const tippy = tippyDrop.value;
-
-		if(document.querySelector(`#tippy-${tippy.id}`)) {
-			tippy.hide();
-		}
-		else {
-			widthDrop.value = 'auto';
-			widthDropMin.value = window.getComputedStyle(domValue.value).width;
-
-			tippy.show();
-		}
-	};
+	return data?.[keyShow] ?? '';
+};
+const textShow = computed(() =>
+	$values.value
+		.map(v => renderShow(optionsRaw.value.find(data => isEqual(getDataValue(data), v)), 1))
+		.join(props.separatorShow)
+);
 
 
-	const select = option => {
-		option.selected = true;
-		$value.value = option.value;
+const domValue = ref(null);
+const domInput = ref(null);
+const domDrop = ref(null);
 
-		tippyDrop.value.hide();
-	};
-	const atClickSelect = option => {
-		if($multiSelect.value) {
-			option.selected = !option.selected;
+const tippyDrop = ref(null);
+const widthDrop = ref('');
+const widthDropMin = ref('');
 
-			const valueNow = option.value;
+const isShowDrop = ref(false);
+const atShowDrop = () => {
+	isShowDrop.value = true;
 
-			const setValues = new Set($values.value);
-			if(setValues.has(valueNow)) {
-				setValues.delete(valueNow);
-			}
-			else {
-				setValues.add(valueNow);
-			}
+	nextTick(() => filterNow.value ? switchFocus.value = !switchFocus.value : domDrop.value.focus());
+};
+const atHideDrop = () => {
+	isShowDrop.value = false;
 
-			const values = [...setValues];
-			if($multiSelect.value == 'array') {
-				$value.value = values;
-			}
-			else {
-				$value.value = values.join(props.separatorValue);
-			}
+	nextTick(() => domInput.value.focus());
+};
+
+
+const switchFocus = ref(false);
+
+const atClickDrop = () => {
+	if($disable.value || $readonly.value) { return; }
+
+	const tippy = tippyDrop.value;
+
+	if(document.querySelector(`#tippy-${tippy.id}`)) {
+		tippy.hide();
+	}
+	else {
+		widthDrop.value = 'auto';
+		widthDropMin.value = window.getComputedStyle(domValue.value).width;
+
+		tippy.show();
+	}
+};
+
+
+const select = option => {
+	option.selected = true;
+	$value.value = option.value;
+
+	tippyDrop.value.hide();
+};
+const atClickSelect = option => {
+	if($multiSelect.value) {
+		option.selected = !option.selected;
+
+		const valueNow = option.value;
+
+		const setValues = new Set($values.value);
+		if(setValues.has(valueNow)) {
+			setValues.delete(valueNow);
 		}
 		else {
-			select(option);
+			setValues.add(valueNow);
 		}
-	};
 
-	onMounted(() => {
-		tippyDrop.value = Tippy(domValue.value, {
-			placement: 'bottom-start',
-			content: domDrop.value,
-			allowHTML: true,
-			interactive: true,
-			animation: '',
-			duration: [0, 0],
-			offset: [0, -2],
-			trigger: 'manual',
-			maxWidth: 'unset',
-			onShow: atShowDrop,
-			onHide: atHideDrop,
-		});
+		const values = [...setValues];
+		if($multiSelect.value == 'array') {
+			$value.value = values;
+		}
+		else {
+			$value.value = values.join(props.separatorValue);
+		}
+	}
+	else {
+		select(option);
+	}
+};
+
+onMounted(() => {
+	tippyDrop.value = Tippy(domValue.value, {
+		placement: 'bottom-start',
+		content: domDrop.value,
+		allowHTML: true,
+		interactive: true,
+		animation: '',
+		duration: [0, 0],
+		offset: [0, -2],
+		trigger: 'manual',
+		maxWidth: 'unset',
+		onShow: atShowDrop,
+		onHide: atHideDrop,
 	});
+});
 
 
-	const indexFocus = ref(0);
-	const focusPrev = () => {
-		const length = optionsUnselected.value.length;
-		indexFocus.value = (length + (indexFocus.value - 1) % length) % length;
+const indexFocus = ref(0);
+const focusPrev = () => {
+	const length = optionsUnselected.value.length;
+	indexFocus.value = (length + (indexFocus.value - 1) % length) % length;
 
-		nextTick(() => document.querySelector('p-option[focus-now]')?.scrollIntoView({ behavior: 'auto', block: 'center' }));
-	};
-	const focusNext = () => {
-		const length = optionsUnselected.value.length;
-		indexFocus.value = (length + (indexFocus.value + 1) % length) % length;
+	nextTick(() => document.querySelector('p-option[focus-now]')?.scrollIntoView({ behavior: 'auto', block: 'center' }));
+};
+const focusNext = () => {
+	const length = optionsUnselected.value.length;
+	indexFocus.value = (length + (indexFocus.value + 1) % length) % length;
 
-		nextTick(() => document.querySelector('p-option[focus-now]')?.scrollIntoView({ behavior: 'auto', block: 'center' }));
-	};
+	nextTick(() => document.querySelector('p-option[focus-now]')?.scrollIntoView({ behavior: 'auto', block: 'center' }));
+};
 
-	const exit = () => {
-		if(filterNow.value && textSearchFilter.value) {
-			return textSearchFilter.value = '';
-		}
+const exit = () => {
+	if(filterNow.value && textSearchFilter.value) {
+		return textSearchFilter.value = '';
+	}
 
-		return tippyDrop.value.hide();
-	};
+	return tippyDrop.value.hide();
+};
 
-	watch(optionsUnselected, optionsUnselected => {
-		if(indexFocus.value >= optionsUnselected.length) {
-			indexFocus.value = optionsUnselected.length - 1;
-		}
-	});
+watch(optionsUnselected, now => {
+	if(indexFocus.value >= now.length) {
+		indexFocus.value = now.length - 1;
+	}
+});
 
-	const selectFocus = () => {
-		const option = optionsUnselected.value[indexFocus.value];
+const selectFocus = () => {
+	const option = optionsUnselected.value[indexFocus.value];
 
-		if(option) { atClickSelect(option); }
-	};
+	if(option) { atClickSelect(option); }
+};
 
 
-	watch(() => props.openSwitch, atClickDrop);
+watch(() => props.openSwitch, atClickDrop);
 </script>
 
 <style lang="sass" scoped>
@@ -487,7 +484,7 @@ p-drop
 			@apply text-[var(--cTextMain)] bg-[var(--cMain)]
 
 		&[selected]
-			@apply font-bold font-bold text-[var(--cMain)]
+			@apply font-bold text-[var(--cMain)]
 
 			&:hover
 				@apply text-[var(--cTextBack)] bg-[unset]
